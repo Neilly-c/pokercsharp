@@ -2,7 +2,7 @@ using System;
 
 namespace mainsource.system.card {
 
-    public sealed class Card {
+    public class Card {
 
         private readonly CardValue value;
         private readonly Suit suit;
@@ -24,7 +24,7 @@ namespace mainsource.system.card {
             return this.value.GetValue() + 13 * this.suit.GetValue() - 14;
         }
 
-        public string ToString() {
+        public override string ToString() {
             return this.value.ToString() + " of " + this.suit.ToString() + ": " + this.GetNumber();
         }
 
@@ -45,7 +45,7 @@ namespace mainsource.system.card {
             return GetValue() == card.GetValue() && GetSuit() == card.GetSuit();
         }
 
-        public int HashCode() {
+        public override int GetHashCode() {
             int result = (int)GetValue();
             result = 31 * result + (int)GetSuit();
             return result;

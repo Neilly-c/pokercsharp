@@ -7,11 +7,11 @@ namespace mainsource.system.handvalue {
 
     public class OptionValue : IComparable<OptionValue> {
 
-        private CardValue value1;
-        private CardValue? value2;
-        private CardValue? value3;
-        private CardValue? value4;
-        private CardValue? value5;
+        private readonly CardValue value1;
+        private readonly CardValue? value2;
+        private readonly CardValue? value3;
+        private readonly CardValue? value4;
+        private readonly CardValue? value5;
         private static Dictionary<HandName, int> reservedValues = new Dictionary<HandName, int>() {
             {HandName.ROYAL_FLUSH, 1 },
             {HandName.STRAIGHT_FLUSH, 1 },
