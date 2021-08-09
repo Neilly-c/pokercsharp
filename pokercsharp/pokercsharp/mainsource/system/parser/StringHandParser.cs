@@ -1,5 +1,6 @@
 namespace mainsource.system.parser {
     using mainsource.system.card;
+    using System;
     using System.Collections.Generic;
 
     public class StringHandParser {
@@ -20,28 +21,20 @@ namespace mainsource.system.parser {
             {'K', CardValue.KING } 
         };
 
-        private static readonly Dictionary<string, Suit> CHARACTER_SUIT_MAP = new Dictionary<string, Suit>() {
-            {"C", Suit.CLUBS },
-            {"c", Suit.CLUBS },
-            {"\u2663", Suit.CLUBS },
-            {"\u2667", Suit.CLUBS },
-            {"H", Suit.HEARTS },
-            {"h", Suit.HEARTS },
-            {"\u2665", Suit.HEARTS },
-            {"\u2661", Suit.HEARTS },
-            {"S", Suit.SPADES },
-            {"s", Suit.SPADES },
-            {"\u2660", Suit.SPADES },
-            {"\u2664", Suit.SPADES },
-            {"D", Suit.DIAMONDS },
-            {"d", Suit.DIAMONDS },
-            {"\u2666", Suit.DIAMONDS },
-            {"\u2662", Suit.DIAMONDS }
+        private static readonly Dictionary<char, Suit> CHARACTER_SUIT_MAP = new Dictionary<char, Suit>() {
+            {'C', Suit.CLUBS },
+            {'c', Suit.CLUBS },
+            {'H', Suit.HEARTS },
+            {'h', Suit.HEARTS },
+            {'S', Suit.SPADES },
+            {'s', Suit.SPADES },
+            {'D', Suit.DIAMONDS },
+            {'d', Suit.DIAMONDS }
         };
 
-        private Card ParseCard(char value, char suit) throws StringHandParserException {
-            const CardValue cardValue = CHARACTER_CARD_VALUE_MAP[value];
-            const Suit cardSuit = CHARACTER_SUIT_MAP[suit];
+        private Card ParseCard(char value, char suit){
+            CardValue cardValue = CHARACTER_CARD_VALUE_MAP[value];
+            Suit cardSuit = CHARACTER_SUIT_MAP[suit];
 
             if (cardValue == null) {
                 throw new StringHandParserException("Unrecognized card value character '" + value + "'");
@@ -53,17 +46,17 @@ namespace mainsource.system.parser {
             return new Card(cardValue, cardSuit);
         }
 
-        public Card[] Parse(string str) throws StringHandParserException {
+        public Card[] Parse(string str){
             if (str == null) {
                 throw new StringHandParserException("A valid hand string needs to be provided");
             }
 
-            const int length = str.length();
-            List<Card> parsedCards = new List<Card>(Math.floorDiv(length, 2));
-            char currentValue = 0, currentSuit = 0;
+            int length = str.Length;
+            List<Card> parsedCardList = new List<Card>(length/2);
+            char currentValue = '0', currentSuit = '0';
             for (int index = 0; index < length; ++index){
                 char currentChar = str[index];
-                if (Char.IsWhitespace(currentChar)){
+                if (Char.IsWhiteSpace(currentChar)){
                     continue;
                 }
 
@@ -74,14 +67,14 @@ namespace mainsource.system.parser {
                 }
 
                 if (currentValue != 0 && currentSuit != 0){
-                    Card parsedCard = this.parseCard(currentValue, currentSuit);
-                    parsedCards.add(parsedCard);
+                    Card parsedCard = this.ParseCard(currentValue, currentSuit);
+                    parsedCardList.Add(parsedCard);
 
-                    currentValue = 0;
-                    currentSuit = 0;
+                    currentValue = '0';
+                    currentSuit = '0';
                 }
             }
-            return parsedCards.toArray(new Card[parsedCards.size()]);
+            return parsedCardList.ToArray();
         }
     }
 }

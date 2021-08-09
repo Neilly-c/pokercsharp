@@ -1,22 +1,24 @@
-namespace mainsource.system.handvalue;
+namespace mainsource.system.handvalue {
 
-public enum HandName {
+    public enum HandName {
 
-    HIGH_CARD,
-    ONE_PAIR,
-    TWO_PAIRS,
-    SET,
-    STRAIGHT,
-    FLUSH,
-    FULL_HOUSE,
-    QUADS,
-    STRAIGHT_FLUSH,
-    ROYAL_FLUSH
-}
+        HIGH_CARD,
+        ONE_PAIR,
+        TWO_PAIRS,
+        SET,
+        STRAIGHT,
+        FLUSH,
+        FULL_HOUSE,
+        QUADS,
+        STRAIGHT_FLUSH,
+        ROYAL_FLUSH
+    }
 
-public class HandNameExt{
+    public class HandNameExt {
 
-    public int getValue(this HandName handName) {
-        return (int)handName;
+        public int getValue(this HandName handName)
+        {
+            return (int)handName;
+        }
     }
 }

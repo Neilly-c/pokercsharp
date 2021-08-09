@@ -1,16 +1,15 @@
-namespace mainsource.system.handvalue;
+namespace mainsource.system.handvalue {
 
-using mainsource.system.card.CardValue;
 
-public class OptionValue : Comparable<OptionValue> {
+    public class OptionValue : Comparable<OptionValue> {
 
-    private sealed CardValue value1;
-    @Nullable private sealed CardValue value2;
-    @Nullable private sealed CardValue value3;
-    @Nullable private sealed CardValue value4;
-    @Nullable private sealed CardValue value5;
-    private static sealed Map<HandName, Integer> reservedValues = new HashMap<>();
-    static {
+        private sealed CardValue value1;
+        @Nullable private sealed CardValue value2;
+        @Nullable private sealed CardValue value3;
+        @Nullable private sealed CardValue value4;
+        @Nullable private sealed CardValue value5;
+        private static sealed Map<HandName, Integer> reservedValues = new HashMap<>();
+        static {
         reservedValues.put(HandName.ROYAL_FLUSH, 1);
         reservedValues.put(HandName.STRAIGHT_FLUSH, 1);
         reservedValues.put(HandName.QUADS, 2);
@@ -67,11 +66,11 @@ public class OptionValue : Comparable<OptionValue> {
         return value5;
     }
 
-    public int getValue(HandName handName){
-        CardValue[] values = {value1, value2, value3, value4, value5};
+    public int getValue(HandName handName) {
+        CardValue[] values = { value1, value2, value3, value4, value5 };
         int value = 0;
-        for(int i=0;i<reservedValues.get(handName);++i){
-            if(values[i] == null){
+        for (int i = 0; i < reservedValues.get(handName); ++i) {
+            if (values[i] == null) {
                 break;
             }
             value += values[i].equals(CardValue.ACE) ? 14 : values[i].getValue();
@@ -80,8 +79,8 @@ public class OptionValue : Comparable<OptionValue> {
         return value;
     }
 
-    public String getDetail(HandName handName){
-        switch (handName){
+    public String getDetail(HandName handName) {
+        switch (handName) {
             case ROYAL_FLUSH:
                 return "ROYAL FLUSH";
             case STRAIGHT_FLUSH:
@@ -105,37 +104,37 @@ public class OptionValue : Comparable<OptionValue> {
     }
 
     public override int compareTo(OptionValue o) {
-        if(!this.getValue1().equals(o.getValue1())){
-            if(this.getValue1().equals(CardValue.ACE))
+        if (!this.getValue1().equals(o.getValue1())) {
+            if (this.getValue1().equals(CardValue.ACE))
                 return 1;
-            if(o.getValue1().equals(CardValue.ACE))
+            if (o.getValue1().equals(CardValue.ACE))
                 return -1;
             return this.getValue1().getValue() - o.getValue1().getValue();
-        }else if(!this.getValue2().equals(o.getValue2())){
-            if(this.getValue2().equals(CardValue.ACE))
+        } else if (!this.getValue2().equals(o.getValue2())) {
+            if (this.getValue2().equals(CardValue.ACE))
                 return 1;
-            if(o.getValue2().equals(CardValue.ACE))
+            if (o.getValue2().equals(CardValue.ACE))
                 return -1;
             return this.getValue2().getValue() - o.getValue2().getValue();
-        }else if(!this.getValue3().equals(o.getValue3())){
-            if(this.getValue3().equals(CardValue.ACE))
+        } else if (!this.getValue3().equals(o.getValue3())) {
+            if (this.getValue3().equals(CardValue.ACE))
                 return 1;
-            if(o.getValue3().equals(CardValue.ACE))
+            if (o.getValue3().equals(CardValue.ACE))
                 return -1;
             return this.getValue3().getValue() - o.getValue3().getValue();
-        }else if(!this.getValue4().equals(o.getValue4())){
-            if(this.getValue4().equals(CardValue.ACE))
+        } else if (!this.getValue4().equals(o.getValue4())) {
+            if (this.getValue4().equals(CardValue.ACE))
                 return 1;
-            if(o.getValue4().equals(CardValue.ACE))
+            if (o.getValue4().equals(CardValue.ACE))
                 return -1;
             return this.getValue4().getValue() - o.getValue4().getValue();
-        }else if(!this.getValue5().equals(o.getValue5())){
-            if(this.getValue5().equals(CardValue.ACE))
+        } else if (!this.getValue5().equals(o.getValue5())) {
+            if (this.getValue5().equals(CardValue.ACE))
                 return 1;
-            if(o.getValue5().equals(CardValue.ACE))
+            if (o.getValue5().equals(CardValue.ACE))
                 return -1;
             return this.getValue5().getValue() - o.getValue5().getValue();
-        }else{
+        } else {
             return 0;
         }
     }
