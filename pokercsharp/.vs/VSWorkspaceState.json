@@ -4,8 +4,10 @@
     "\\pokercsharp",
     "\\pokercsharp\\mainsource",
     "\\pokercsharp\\mainsource\\system",
-    "\\pokercsharp\\mainsource\\system\\card"
+    "\\pokercsharp\\mainsource\\system\\card",
+    "\\pokercsharp\\mainsource\\system\\handvalue",
+    "\\pokercsharp\\mainsource\\system\\parser"
   ],
-  "SelectedNode": "\\pokercsharp\\pokercsharp.csproj",
+  "SelectedNode": "\\pokercsharp\\mainsource\\system\\parser\\StringHandParserException.cs",
   "PreviewInSolutionExplorer": false
 }
