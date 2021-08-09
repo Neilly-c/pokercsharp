@@ -1,8 +1,6 @@
-namespace mainsource.system.card
-{
+namespace mainsource.system.card {
 
-    public enum Suit
-    {
+    public enum Suit {
 
         CLUBS = 1,
         DIAMONDS,
@@ -10,16 +8,13 @@ namespace mainsource.system.card
         SPADES
     }
 
-    public static class SuitExt
-    {
+    public static class SuitExt {
 
-        public static int GetValue(this Suit suit)
-        {
+        public static int GetValue(this Suit suit) {
             return (int)suit;
         }
 
-        public static string GetAbb(this Suit suit)
-        {
+        public static string GetAbb(this Suit suit) {
             string[] abb = { "c", "d", "h", "s" };
             return abb[(int)suit];
         }

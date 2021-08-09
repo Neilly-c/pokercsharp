@@ -14,10 +14,9 @@ namespace mainsource.system.handvalue {
         ROYAL_FLUSH
     }
 
-    public class HandNameExt {
+    public static class HandNameExt {
 
-        public int getValue(this HandName handName)
-        {
+        public static int GetValue(this HandName handName) {
             return (int)handName;
         }
     }

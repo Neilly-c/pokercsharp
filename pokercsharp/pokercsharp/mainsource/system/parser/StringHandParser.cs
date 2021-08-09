@@ -36,13 +36,6 @@ namespace mainsource.system.parser {
             CardValue cardValue = CHARACTER_CARD_VALUE_MAP[value];
             Suit cardSuit = CHARACTER_SUIT_MAP[suit];
 
-            if (cardValue == null) {
-                throw new StringHandParserException("Unrecognized card value character '" + value + "'");
-            }
-            if (cardSuit == null) {
-                throw new StringHandParserException("Unrecognized card suit character '" + suit + "'");
-            }
-
             return new Card(cardValue, cardSuit);
         }
 

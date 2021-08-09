@@ -1,142 +1,146 @@
+using mainsource.system.card;
+using System;
+using System.Collections.Generic;
+
 namespace mainsource.system.handvalue {
 
 
-    public class OptionValue : Comparable<OptionValue> {
+    public class OptionValue : IComparable<OptionValue> {
 
-        private sealed CardValue value1;
-        @Nullable private sealed CardValue value2;
-        @Nullable private sealed CardValue value3;
-        @Nullable private sealed CardValue value4;
-        @Nullable private sealed CardValue value5;
-        private static sealed Map<HandName, Integer> reservedValues = new HashMap<>();
-        static {
-        reservedValues.put(HandName.ROYAL_FLUSH, 1);
-        reservedValues.put(HandName.STRAIGHT_FLUSH, 1);
-        reservedValues.put(HandName.QUADS, 2);
-        reservedValues.put(HandName.FULL_HOUSE, 2);
-        reservedValues.put(HandName.FLUSH, 5);
-        reservedValues.put(HandName.STRAIGHT, 1);
-        reservedValues.put(HandName.SET, 3);
-        reservedValues.put(HandName.TWO_PAIRS, 3);
-        reservedValues.put(HandName.ONE_PAIR, 4);
-        reservedValues.put(HandName.HIGH_CARD, 5);
-    }
+        private CardValue value1;
+        private CardValue? value2;
+        private CardValue? value3;
+        private CardValue? value4;
+        private CardValue? value5;
+        private static Dictionary<HandName, int> reservedValues = new Dictionary<HandName, int>() {
+            {HandName.ROYAL_FLUSH, 1 },
+            {HandName.STRAIGHT_FLUSH, 1 },
+            {HandName.QUADS, 2 },
+            {HandName.FULL_HOUSE, 2 },
+            {HandName.FLUSH, 5 },
+            {HandName.STRAIGHT, 1 },
+            {HandName.SET, 3 },
+            {HandName.TWO_PAIRS, 3 },
+            {HandName.ONE_PAIR, 4 },
+            {HandName.HIGH_CARD, 5 }
+        };
 
-    public OptionValue(CardValue value1) {
-        this(value1, null);
-    }
+        internal OptionValue(CardValue value1) {
+            this.value1 = value1;
+        }
 
-    public OptionValue(CardValue value1, CardValue value2) {
-        this(value1, value2, null);
-    }
+        internal OptionValue(CardValue value1, CardValue value2)
+            : this(value1) {
+            this.value2 = value2;
+        }
 
-    public OptionValue(CardValue value1, CardValue value2, CardValue value3) {
-        this(value1, value2, value3, null);
-    }
+        internal OptionValue(CardValue value1, CardValue value2, CardValue value3)
+            : this(value1, value2) {
+            this.value3 = value3;
+        }
 
-    public OptionValue(CardValue value1, CardValue value2, CardValue value3, CardValue value4) {
-        this(value1, value2, value3, value4, null);
-    }
+        internal OptionValue(CardValue value1, CardValue value2, CardValue value3, CardValue value4)
+            : this(value1, value2, value3) {
+            this.value4 = value4;
+        }
 
-    public OptionValue(CardValue value1, CardValue value2, CardValue value3, CardValue value4, CardValue value5) {
-        this.value1 = value1;
-        this.value2 = value2;
-        this.value3 = value3;
-        this.value4 = value4;
-        this.value5 = value5;
-    }
+        internal OptionValue(CardValue value1, CardValue value2, CardValue value3, CardValue value4, CardValue value5)
+            : this(value1, value2, value3, value4) {
+            this.value5 = value5;
+        }
 
-    public CardValue getValue1() {
-        return value1;
-    }
+        public CardValue getValue1() {
+            return value1;
+        }
 
-    public CardValue getValue2() {
-        return value2;
-    }
+        public CardValue? getValue2() {
+            return value2;
+        }
 
-    public CardValue getValue3() {
-        return value3;
-    }
+        public CardValue? getValue3() {
+            return value3;
+        }
 
-    public CardValue getValue4() {
-        return value4;
-    }
+        public CardValue? getValue4() {
+            return value4;
+        }
 
-    public CardValue getValue5() {
-        return value5;
-    }
+        public CardValue? getValue5() {
+            return value5;
+        }
 
-    public int getValue(HandName handName) {
-        CardValue[] values = { value1, value2, value3, value4, value5 };
-        int value = 0;
-        for (int i = 0; i < reservedValues.get(handName); ++i) {
-            if (values[i] == null) {
-                break;
+        public int GetValue(HandName handName) {
+            CardValue?[] values = { value1, value2, value3, value4, value5 };
+            int value = 0;
+            for (int i = 0; i < reservedValues[handName]; ++i) {
+                if (values[i] == null) {
+                    break;
+                }
+                CardValue c = (CardValue)values[i];
+                value += values[i].Equals(CardValue.ACE) ? 14 : c.GetValue();
+                value *= 16;
             }
-            value += values[i].equals(CardValue.ACE) ? 14 : values[i].getValue();
-            value *= 16;
+            return value;
         }
-        return value;
-    }
 
-    public String getDetail(HandName handName) {
-        switch (handName) {
-            case ROYAL_FLUSH:
-                return "ROYAL FLUSH";
-            case STRAIGHT_FLUSH:
-            case STRAIGHT:
-                return getValue1().toString() + " high";
-            case QUADS:
-                return getValue1().toString() + ", kicker " + getValue2().toString();
-            case FULL_HOUSE:
-                return getValue1().toString() + " full of " + getValue2().toString();
-            case FLUSH:
-            case HIGH_CARD:
-                return getValue1().toString() + "high, " + getValue2().toString() + ", " + getValue3() + ", " + getValue4() + ", " + getValue5();
-            case SET:
-                return getValue1().toString() + ", kicker " + getValue2().toString() + ", " + getValue3().toString();
-            case TWO_PAIRS:
-                return getValue1().toString() + ", " + getValue2().toString() + ", kicker " + getValue3().toString();
-            case ONE_PAIR:
-                return getValue1().toString() + ", kicker " + getValue2().toString() + ", " + getValue3().toString() + ", " + getValue4().toString();
+        public String GetDetail(HandName handName) {
+            switch (handName) {
+                case HandName.ROYAL_FLUSH:
+                    return "ROYAL FLUSH";
+                case HandName.STRAIGHT_FLUSH:
+                case HandName.STRAIGHT:
+                    return getValue1().ToString() + " high";
+                case HandName.QUADS:
+                    return getValue1().ToString() + ", kicker " + getValue2().ToString();
+                case HandName.FULL_HOUSE:
+                    return getValue1().ToString() + " full of " + getValue2().ToString();
+                case HandName.FLUSH:
+                case HandName.HIGH_CARD:
+                    return getValue1().ToString() + "high, " + getValue2().ToString() + ", " + getValue3() + ", " + getValue4() + ", " + getValue5();
+                case HandName.SET:
+                    return getValue1().ToString() + ", kicker " + getValue2().ToString() + ", " + getValue3().ToString();
+                case HandName.TWO_PAIRS:
+                    return getValue1().ToString() + ", " + getValue2().ToString() + ", kicker " + getValue3().ToString();
+                case HandName.ONE_PAIR:
+                    return getValue1().ToString() + ", kicker " + getValue2().ToString() + ", " + getValue3().ToString() + ", " + getValue4().ToString();
+            }
+            return getValue1().ToString();
         }
-        return getValue1().toString();
-    }
 
-    public override int compareTo(OptionValue o) {
-        if (!this.getValue1().equals(o.getValue1())) {
-            if (this.getValue1().equals(CardValue.ACE))
-                return 1;
-            if (o.getValue1().equals(CardValue.ACE))
-                return -1;
-            return this.getValue1().getValue() - o.getValue1().getValue();
-        } else if (!this.getValue2().equals(o.getValue2())) {
-            if (this.getValue2().equals(CardValue.ACE))
-                return 1;
-            if (o.getValue2().equals(CardValue.ACE))
-                return -1;
-            return this.getValue2().getValue() - o.getValue2().getValue();
-        } else if (!this.getValue3().equals(o.getValue3())) {
-            if (this.getValue3().equals(CardValue.ACE))
-                return 1;
-            if (o.getValue3().equals(CardValue.ACE))
-                return -1;
-            return this.getValue3().getValue() - o.getValue3().getValue();
-        } else if (!this.getValue4().equals(o.getValue4())) {
-            if (this.getValue4().equals(CardValue.ACE))
-                return 1;
-            if (o.getValue4().equals(CardValue.ACE))
-                return -1;
-            return this.getValue4().getValue() - o.getValue4().getValue();
-        } else if (!this.getValue5().equals(o.getValue5())) {
-            if (this.getValue5().equals(CardValue.ACE))
-                return 1;
-            if (o.getValue5().equals(CardValue.ACE))
-                return -1;
-            return this.getValue5().getValue() - o.getValue5().getValue();
-        } else {
-            return 0;
+        public int CompareTo(OptionValue o) {
+            if (!this.getValue1().Equals(o.getValue1())) {
+                if (this.getValue1().Equals(CardValue.ACE))
+                    return 1;
+                if (o.getValue1().Equals(CardValue.ACE))
+                    return -1;
+                return this.getValue1().GetValue() - o.getValue1().GetValue();
+            } else if (!this.getValue2().Equals(o.getValue2())) {
+                if (this.getValue2().Equals(CardValue.ACE))
+                    return 1;
+                if (o.getValue2().Equals(CardValue.ACE))
+                    return -1;
+                return this.getValue2().GetValueOrDefault() - o.getValue2().GetValueOrDefault();
+            } else if (!this.getValue3().Equals(o.getValue3())) {
+                if (this.getValue3().Equals(CardValue.ACE))
+                    return 1;
+                if (o.getValue3().Equals(CardValue.ACE))
+                    return -1;
+                return this.getValue3().GetValueOrDefault() - o.getValue3().GetValueOrDefault();
+            } else if (!this.getValue4().Equals(o.getValue4())) {
+                if (this.getValue4().Equals(CardValue.ACE))
+                    return 1;
+                if (o.getValue4().Equals(CardValue.ACE))
+                    return -1;
+                return this.getValue4().GetValueOrDefault() - o.getValue4().GetValueOrDefault();
+            } else if (!this.getValue5().Equals(o.getValue5())) {
+                if (this.getValue5().Equals(CardValue.ACE))
+                    return 1;
+                if (o.getValue5().Equals(CardValue.ACE))
+                    return -1;
+                return this.getValue5().GetValueOrDefault() - o.getValue5().GetValueOrDefault();
+            } else {
+                return 0;
+            }
         }
     }
-
 }

@@ -1,28 +1,30 @@
+using System;
+
 namespace mainsource.system.handvalue{
 
-  public class FinalHand : Comparable<FinalHand> {
+  public class FinalHand : IComparable<FinalHand> {
 
-      private const HandName handName;
-      private const OptionValue optionValue;
+      private readonly HandName handName;
+      private readonly OptionValue optionValue;
 
       public FinalHand(HandName handName, OptionValue optionValue){
           this.handName = handName;
           this.optionValue = optionValue;
       }
 
-      public HandName getHandName() {
+      public HandName GetHandName() {
           return handName;
       }
 
-      public OptionValue getOptionValue() {
+      public OptionValue GetOptionValue() {
           return optionValue;
       }
 
-      public string toString() {
-          return this.handName.ToString() + ", " + this.optionValue.getDetail(this.handName);
+      public override string ToString() {
+          return this.handName.ToString() + ", " + this.optionValue.GetDetail(this.handName);
       }
 
-      public int compareTo(FinalHand o) {
+      public int CompareTo(FinalHand o) {
           if(this.handName.GetValue() > o.handName.GetValue()){
               return 1;
           }
