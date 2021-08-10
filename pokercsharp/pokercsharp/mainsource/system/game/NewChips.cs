@@ -15,10 +15,10 @@ namespace mainsource.system.game {
 
         public NewChips(int plrs, int chip_count) {
             if (plrs < 2 || plrs > 10) {
-                throw new TableException("players must be between 2 to 10");
+                //throw new TableException("players must be between 2 to 10");
             }
             if (chip_count < 0) {
-                throw new TableException("chip count must be positive");
+                //throw new TableException("chip count must be positive");
             }
             chipCount = new int[plrs];
             betCount = new int[plrs];
@@ -28,10 +28,10 @@ namespace mainsource.system.game {
 
         public void Raise(int p, int val) {
             if (p < 0 || p >= plrs) {
-                throw new TableException("invalid number of players");
+                //throw new TableException("invalid number of players");
             }
             if (chipCount[p] < val - betCount[p]) {
-                throw new TableException("invalid bet");
+                //throw new TableException("invalid bet");
             }
             chipCount[p] -= (val - betCount[p]);
             betCount[p] = val;
@@ -39,7 +39,7 @@ namespace mainsource.system.game {
 
         public void Call(int p) {
             if (p < 0 || p >= plrs) {
-                throw new TableException("invalid number of players");
+                //throw new TableException("invalid number of players");
             }
             int bet_max = 0;
             for (int i = 0; i < plrs; ++i) {
@@ -48,7 +48,7 @@ namespace mainsource.system.game {
                 }
             }
             if (bet_max == betCount[p]) {
-                throw new TableException("invalid call");
+                //throw new TableException("invalid call");
             }
             chipCount[p] -= (bet_max - betCount[p]);
             betCount[p] = bet_max;

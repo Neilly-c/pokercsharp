@@ -2,7 +2,7 @@ using System;
 
 namespace mainsource.system.card {
 
-    public class Card {
+    public class Card : IComparable<Card> {
 
         private readonly CardValue value;
         private readonly Suit suit;
