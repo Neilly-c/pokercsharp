@@ -1,4 +1,5 @@
-﻿using System;
+﻿using pokercsharp.mainsource.appendix;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,9 @@ namespace pokercsharp
         public MainWindow()
         {
             InitializeComponent();
+            Console.WriteLine("Hello!");
+            WinRateGrid winRateGrid = new WinRateGrid();
+            winRateGrid.Init();
         }
     }
 }
