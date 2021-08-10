@@ -6,22 +6,4 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="mainsource\system\evaluator\EvaluatorException.cs" />
-    <Compile Remove="mainsource\system\evaluator\HandEvaluator.cs" />
-    <Compile Remove="mainsource\system\evaluator\HoldemHandEvaluator.cs" />
-    <Compile Remove="mainsource\system\game\NewChips.cs" />
-    <Compile Remove="mainsource\system\game\NewDeck.cs" />
-    <Compile Remove="mainsource\system\game\TableException.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="mainsource\system\evaluator\EvaluatorException.cs" />
-    <None Include="mainsource\system\evaluator\HandEvaluator.cs" />
-    <None Include="mainsource\system\evaluator\HoldemHandEvaluator.cs" />
-    <None Include="mainsource\system\game\NewChips.cs" />
-    <None Include="mainsource\system\game\NewDeck.cs" />
-    <None Include="mainsource\system\game\TableException.cs" />
-  </ItemGroup>
-
 </Project>

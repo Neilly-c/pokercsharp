@@ -1,8 +1,9 @@
+using System;
+
 namespace mainsource.system.evaluator {
 
-	public class EvaluatorException : Exception {
-		public EvaluatorException(string message) {
-			super(message);
-		}
-	}
+    public class EvaluatorException : Exception {
+        public EvaluatorException(string message) : base(message) {
+        }
+    }
 }

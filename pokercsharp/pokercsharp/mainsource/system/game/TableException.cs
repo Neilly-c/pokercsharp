@@ -1,8 +1,9 @@
-namespace mainsource.system.game{
+using System;
 
-    public class TableException : Exception{
-        public TableException(string message){
-            super(message);
+namespace mainsource.system.game {
+
+    public class TableException : Exception {
+        public TableException(string message) : base(message) {
         }
     }
 }
