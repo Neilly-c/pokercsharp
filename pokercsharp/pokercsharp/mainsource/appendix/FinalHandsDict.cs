@@ -39,6 +39,9 @@ namespace pokercsharp.mainsource.appendix {
 					}
 				}
 			}
+                                   
+            int loop2 = 0;
+            HoldemHandEvaluator h_evaluator = new HoldemHandEvaluator();
 			
 			for(int a = 0; a<FULL_DECK_LEN; ++a) {
 				for(int b = a + 1; b<FULL_DECK_LEN; ++b) {
@@ -51,7 +54,7 @@ namespace pokercsharp.mainsource.appendix {
 																		 , card_arr[e], card_arr[f], card_arr[g]};
 										Array.Sort(hand_n_board);
 										Array.Reverse(hand_n_board);
-										finalHoldemDict.Add(hand_n_board, evaluator.Evaluate(hand_n_board));
+										finalHoldemDict.Add(hand_n_board, h_evaluator.Evaluate(hand_n_board));
 									}
 								}
 							}
