@@ -82,6 +82,20 @@ namespace mainsource.system.handvalue {
             }
             return value;
         }
+        
+        public override int GetHash(){
+            CardValue?[] values = { value1, value2, value3, value4, value5 };
+            int hash = 0;
+            for (int i = 0; i < 5; ++i) {
+                if (values[i] != null) {
+                    hash += values[i];
+                }
+                if(i < 4){
+                    hash *= 14;
+                }
+            }
+            return hash;
+        }
 
         public String GetDetail(HandName handName) {
             switch (handName) {
