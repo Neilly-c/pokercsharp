@@ -12,30 +12,31 @@ namespace pokercsharp.mainsource.appendix {
         const int FULL_DECK_LEN = 52;
 
         public void Init() {
-            int[][] full_grid = new int[COMBINATION][];
-            Card[] card_arr = new Card[FULL_DECK_LEN];
-            Card[][] hand_arr = new Card[COMBINATION][];
+            int[][] full_grid = new int[COMBINATION][];     //1326*1326
+            Card[] card_arr = new Card[FULL_DECK_LEN];      //ただの52枚のカードの配列
+            Card[][] hand_arr = new Card[COMBINATION][];    //1326通りのハンドの配列
             for (int i = 0; i < COMBINATION; ++i) {
                 full_grid[i] = new int[COMBINATION];
-                hand_arr[i] = new Card[2];
+                hand_arr[i] = new Card[2];                  //配列初期化処理(javaと違って2次元配列はこうやって定義しないといけないらしい)
             }
             for(int i = 0; i < FULL_DECK_LEN; ++i) {
-                card_arr[i] = new Card(CardValueExt.GetCardValueFromInt(1 + (i / 4)), SuitExt.GetSuitFromInt(1 + (i % 4)));
+                card_arr[i] = new Card(CardValueExt.GetCardValueFromInt(1 + (i / 4)), SuitExt.GetSuitFromInt(1 + (i % 4)));     //カード配列生成
             }
 
             int iter = 0;
             for(int i = 0; i < FULL_DECK_LEN; ++i) {
-                for (int j = i + 1; j < FULL_DECK_LEN; ++j) {
+                for (int j = i + 1; j < FULL_DECK_LEN; ++j) {       //ハンド配列生成
                     hand_arr[iter][0] = card_arr[i];
                     hand_arr[iter][1] = card_arr[j];
                     ++iter;
                 }
             }
 
-            int loop = 0;
+            int loop = 0
+            HoldemHandEvaluator evaluator = new HoldemHandEvaluator();  //ハンド評価クラス　当たり前だけどこれが軽くなればだいぶ変わる
 
             for(int i = 0; i < COMBINATION; ++i) {
-                for(int j = i + 1; j < COMBINATION; ++j) {
+                for(int j = i + 1; j < COMBINATION; ++j) {      // 1326 * 1325 / 2 = 878475 loops.
 
                     int p1_0 = 0, p1_1 = 0, p2_0 = 0, p2_1 = 0;
                     for(int k = 0; k < FULL_DECK_LEN; ++k) {
@@ -52,15 +53,14 @@ namespace pokercsharp.mainsource.appendix {
                             p2_1 = k;
                         }
                     }
-                    if(!IsAllDifferent(p1_0, p1_1, p2_0, p2_1) ){
+                    if(!IsAllDifferent(p1_0, p1_1, p2_0, p2_1) ){   //持ってるカードが被ってるハンドは除外
                         full_grid[i][j] = -1;
                         full_grid[j][i] = -1;
                         continue;
                     }
-
-                    HoldemHandEvaluator evaluator = new HoldemHandEvaluator();
-                    int winCount = 0, count = 0;
-                    Stopwatch sw = new Stopwatch();
+                    
+                    int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
+                    Stopwatch sw = new Stopwatch();     //処理時間計測用
                     sw.Start();
                     for(int s = 0; s < FULL_DECK_LEN; ++s) {
                         if(!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, s)) {
@@ -79,15 +79,16 @@ namespace pokercsharp.mainsource.appendix {
                                         continue;
                                     }
                                     for (int w = v + 1; w < FULL_DECK_LEN; ++w) {
-                                        if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, w)) {
+                                        if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, w)) {       //これなんとかならんの？？？
                                             continue;
                                         }
                                         Card[] board = new Card[] { card_arr[s], card_arr[t], card_arr[u], card_arr[v], card_arr[w] };
-                                        FinalHand f_p1 = evaluator.Evaluate(hand_arr[i], board),
+                                        FinalHand 
+                                            f_p1 = evaluator.Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
                                             f_p2 = evaluator.Evaluate(hand_arr[j], board);
-                                        if(f_p1.CompareTo(f_p2) > 0) {
+                                        if(f_p1.CompareTo(f_p2) > 0) {  //クラスFinalHandはIComparableを継承しているのでCompareTo()で比較できる 比較大なら勝ち
                                             winCount += 2;
-                                        }else if(f_p1.CompareTo(f_p2) == 0) {
+                                        }else if(f_p1.CompareTo(f_p2) == 0) {   //イコールなら引き分け
                                             winCount += 1;
                                         }
                                         count += 2;
@@ -102,8 +103,8 @@ namespace pokercsharp.mainsource.appendix {
                         }
                     }
 
-                    full_grid[i][j] = winCount;
-                    full_grid[j][i] = count - winCount;
+                    full_grid[i][j] = winCount;         //集計して勝った回数を書いておく　実際に使う時は分母で割って確率を出せばよい(double型より軽く正確)
+                    full_grid[j][i] = count - winCount; //逆のマッチアップは勝率も逆にしておく
 
                     ++loop;
                     Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
