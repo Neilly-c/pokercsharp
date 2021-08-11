@@ -19,6 +19,10 @@ namespace mainsource.system.handvalue{
       public OptionValue GetOptionValue() {
           return optionValue;
       }
+    
+    public override int GetHash(){
+        return (((int)handname) << 20) + optionValue.GetHash();
+    }
 
       public override string ToString() {
           return this.handName.ToString() + ", " + this.optionValue.GetDetail(this.handName);
