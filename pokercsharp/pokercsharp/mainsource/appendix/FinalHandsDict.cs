@@ -4,7 +4,7 @@ namespace pokercsharp.mainsource.appendix {
 	class FinalHandsDict{
     	const int FULL_DECK_LEN = 52;
 		static Dictionary<Card[], FinalHand> finalDict = new Dictionary<Card[], FinalHand>();
-		static Dictionary<Card[], FinalHand> finalHoldemDict = new Dictionary<Card[], FinalHand>();
+		static Dictionary<int, int> finalHoldemDict = new Dictionary<int, int>();
 	
 		public void Init(){
             
