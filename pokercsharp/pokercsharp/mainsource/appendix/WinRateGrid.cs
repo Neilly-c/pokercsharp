@@ -38,7 +38,7 @@ namespace pokercsharp.mainsource.appendix {
             for(int i = 0; i < COMBINATION; ++i) {
                 for(int j = i + 1; j < COMBINATION; ++j) {      // 1326 * 1325 / 2 = 878475 loops.
                     
-                    if(full_gris[i][j] != 0){
+                    if(full_grid[i][j] != 0){
                         continue;
                     }
 
@@ -76,25 +76,10 @@ namespace pokercsharp.mainsource.appendix {
                     Stopwatch sw = new Stopwatch();     //処理時間計測用
                     sw.Start();
                     for(int s = 0; s < card_list_edit.Length; ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
-                        if(!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, s)) {
-                            continue;
-                        }
                         for(int t = s + 1; t < card_list_edit.Length; ++t) {
-                            if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, t)) {
-                                continue;
-                            }
                             for (int u = t + 1; u < card_list_edit.Length; ++u) {
-                                if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, u)) {
-                                    continue;
-                                }
                                 for (int v = u + 1; v < card_list_edit.Length; ++v) {
-                                    if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, v)) {
-                                        continue;
-                                    }
-                                    for (int w = v + 1; w < card_list_edit.Length; ++w) {
-                                        if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, w)) {       //これなんとかならんの？？？
-                                            continue;
-                                        }
+                                    for (int w = v + 1; w < card_list_edit.Length; ++w) {       //これなんとかならんの？？？
                                         Card[] board = new Card[] { card_list_edit[s], card_list_edit[t], card_list_edit[u], card_list_edit[v], card_list_edit[w] };
                                         FinalHand 
                                             f_p1 = evaluator.Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
