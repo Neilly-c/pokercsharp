@@ -32,7 +32,7 @@ namespace pokercsharp.mainsource.appendix {
                 }
             }
 
-            int loop = 0
+            int loop = 0;
             HoldemHandEvaluator evaluator = new HoldemHandEvaluator();  //ハンド評価クラス　当たり前だけどこれが軽くなればだいぶ変わる
 
             for(int i = 0; i < COMBINATION; ++i) {
