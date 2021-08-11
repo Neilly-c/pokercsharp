@@ -54,7 +54,16 @@ namespace pokercsharp.mainsource.appendix {
 																		 , card_arr[e], card_arr[f], card_arr[g]};
 										Array.Sort(hand_n_board);
 										Array.Reverse(hand_n_board);
-										finalHoldemDict.Add(hand_n_board, h_evaluator.Evaluate(hand_n_board));
+										int keyHash = 0;
+										for(int i=0;i<7;++i){
+											keyHash += hand_n_board[i].GetValue();
+											if(i<6){
+												keyHash *= 53;
+											}
+										}
+										FinalHand fh = h_evaluator.Evaluate(hand_n_board);
+										int valueHash = fh.GetHash();
+										finalHoldemDict.Add(keyHash, valueHash);
 									}
 								}
 							}
