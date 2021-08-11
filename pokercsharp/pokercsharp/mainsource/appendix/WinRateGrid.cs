@@ -37,6 +37,10 @@ namespace pokercsharp.mainsource.appendix {
 
             for(int i = 0; i < COMBINATION; ++i) {
                 for(int j = i + 1; j < COMBINATION; ++j) {      // 1326 * 1325 / 2 = 878475 loops.
+                    
+                    if(full_gris[i][j] != 0){
+                        continue;
+                    }
 
                     int p1_0 = 0, p1_1 = 0, p2_0 = 0, p2_1 = 0;
                     for(int k = 0; k < FULL_DECK_LEN; ++k) {
@@ -58,31 +62,40 @@ namespace pokercsharp.mainsource.appendix {
                         full_grid[j][i] = -1;
                         continue;
                     }
+                    List<Card> card_list_edit = new List<Card>(card_arr);   //すでに使っているカードをデッキから除く
+                    card_list_edit.Remove(hand_arr[i][0]);
+                    card_list_edit.Remove(hand_arr[i][1]);
+                    card_list_edit.Remove(hand_arr[j][0]);
+                    card_list_edit.Remove(hand_arr[j][1]);
+                    
+                    if(card_list_edit.Length != 48){
+                        Debug.WriteLine("HALT!!!");
+                    }
                     
                     int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
                     Stopwatch sw = new Stopwatch();     //処理時間計測用
                     sw.Start();
-                    for(int s = 0; s < FULL_DECK_LEN; ++s) {
+                    for(int s = 0; s < card_list_edit.Length; ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
                         if(!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, s)) {
                             continue;
                         }
-                        for(int t = s + 1; t < FULL_DECK_LEN; ++t) {
+                        for(int t = s + 1; t < card_list_edit.Length; ++t) {
                             if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, t)) {
                                 continue;
                             }
-                            for (int u = t + 1; u < FULL_DECK_LEN; ++u) {
+                            for (int u = t + 1; u < card_list_edit.Length; ++u) {
                                 if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, u)) {
                                     continue;
                                 }
-                                for (int v = u + 1; v < FULL_DECK_LEN; ++v) {
+                                for (int v = u + 1; v < card_list_edit.Length; ++v) {
                                     if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, v)) {
                                         continue;
                                     }
-                                    for (int w = v + 1; w < FULL_DECK_LEN; ++w) {
+                                    for (int w = v + 1; w < card_list_edit.Length; ++w) {
                                         if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, w)) {       //これなんとかならんの？？？
                                             continue;
                                         }
-                                        Card[] board = new Card[] { card_arr[s], card_arr[t], card_arr[u], card_arr[v], card_arr[w] };
+                                        Card[] board = new Card[] { card_list_edit[s], card_list_edit[t], card_list_edit[u], card_list_edit[v], card_list_edit[w] };
                                         FinalHand 
                                             f_p1 = evaluator.Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
                                             f_p2 = evaluator.Evaluate(hand_arr[j], board);
@@ -110,6 +123,48 @@ namespace pokercsharp.mainsource.appendix {
                     Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
                         + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " + 
                         loop + " complete, " + full_grid[i][j] + "-" + full_grid[j][i]);
+                    
+                    for(int i_ = i; i_ < COMBINATION; ++i_) {       //計算省略できるところを省略するために調査する
+                        for(int j_ = i_ + 1; j_ < COMBINATION; ++j_) {      // MAX 1326 * 1325 / 2 = 878475 loops.
+                            if(full_grid[i_][j_] != 0){     //もう埋まってるところはパス
+                                continue;
+                            }
+                            CardValue 
+                                cv_i0 = hand_arr[i][0].GetCardValue(),
+                                cv_i1 = hand_arr[i][1].GetCardValue(),
+                                cv_j0 = hand_arr[j][0].GetCardValue(),
+                                cv_j1 = hand_arr[j][1].GetCardValue(),
+                                cv_i_0 = hand_arr[i_][0].GetCardValue(),
+                                cv_i_1 = hand_arr[i_][1].GetCardValue(),
+                                cv_j_0 = hand_arr[j_][0].GetCardValue(),
+                                cv_j_1 = hand_arr[j_][1].GetCardValue();
+                            Suit 
+                                s_i0 = hand_arr[i][0].GetSuit(),
+                                s_i1 = hand_arr[i][1].GetSuit(),
+                                s_j0 = hand_arr[j][0].GetSuit(),
+                                s_j1 = hand_arr[j][1].GetSuit(),
+                                s_i_0 = hand_arr[i_][0].GetSuit(),
+                                s_i_1 = hand_arr[i_][1].GetSuit(),
+                                s_j_0 = hand_arr[j_][0].GetSuit(),
+                                s_j_1 = hand_arr[j_][1].GetSuit();
+                            if(!cv_i0.Equals(cv_i_0) || !cv_i1.Equals(cv_i_1) || !cv_j0.Equals(cv_j_0) || !cv_j1.Equals(cv_j_1)){
+                                continue;   //数字が違うやつは結果が違うのでパス
+                            }
+                            if(s_i0.Equals(s_i1) == s_i_0.Equals(s_i_1)
+                              && s_i0.Equals(s_j0) == s_i_0.Equals(s_j_0)
+                              && s_i0.Equals(s_j1) == s_i_0.Equals(s_j_1)
+                              && s_i1.Equals(s_j0) == s_i_1.Equals(s_j_0)
+                              && s_i1.Equals(s_j1) == s_i_1.Equals(s_j_1)
+                              && s_j0.Equals(s_j1) == s_j_0.Equals(s_j_1)){     //6通り全部の組み合わせが同じなら同じと見なす
+                                full_grid[i_][j_] = winCount;
+                                full_grid[j_][i_] = count - winCount;
+                                Debug.Write(hand_arr[i_][0].ToAbbreviateString() + hand_arr[i_][1].ToAbbreviateString() + "-"
+                                    + hand_arr[j_][0].ToAbbreviateString() + hand_arr[j_][1].ToAbbreviateString() + ", " + 
+                                    " same as the former's, " + full_grid[i_][j_] + "-" + full_grid[j_][i_]);
+                            }
+                        }
+                    }
+                    
                 }
             }
 
