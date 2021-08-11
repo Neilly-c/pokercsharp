@@ -77,7 +77,7 @@ namespace mainsource.system.handvalue {
                     break;
                 }
                 CardValue c = (CardValue)values[i];
-                value += values[i].Equals(CardValue.ACE) ? 14 : c.GetValue();
+                value += c.Equals(CardValue.ACE) ? 14 : c.GetValue();
                 value *= 16;
             }
             return value;
@@ -88,10 +88,11 @@ namespace mainsource.system.handvalue {
             int hash = 0;
             for (int i = 0; i < 5; ++i) {
                 if (values[i] != null) {
-                    hash += values[i];
+                    CardValue c = (CardValue)values[i];
+                    hash += c.Equals(CardValue.ACE) ? 14 : c.GetValue();
                 }
                 if(i < 4){
-                    hash *= 14;
+                    hash *= 16;
                 }
             }
             return hash;
