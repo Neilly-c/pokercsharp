@@ -83,7 +83,7 @@ namespace mainsource.system.handvalue {
             return value;
         }
         
-        public override int GetHash(){
+        public override int GetHashCode(){
             CardValue?[] values = { value1, value2, value3, value4, value5 };
             int hash = 0;
             for (int i = 0; i < 5; ++i) {

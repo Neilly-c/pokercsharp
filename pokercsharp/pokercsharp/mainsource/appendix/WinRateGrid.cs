@@ -4,6 +4,7 @@ using mainsource.system.handvalue;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace pokercsharp.mainsource.appendix {
@@ -68,18 +69,18 @@ namespace pokercsharp.mainsource.appendix {
                     card_list_edit.Remove(hand_arr[j][0]);
                     card_list_edit.Remove(hand_arr[j][1]);
                     
-                    if(card_list_edit.Length != 48){
+                    if(card_list_edit.Count() != 48){
                         Debug.WriteLine("HALT!!!");
                     }
                     
                     int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
                     Stopwatch sw = new Stopwatch();     //処理時間計測用
                     sw.Start();
-                    for(int s = 0; s < card_list_edit.Length; ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
-                        for(int t = s + 1; t < card_list_edit.Length; ++t) {
-                            for (int u = t + 1; u < card_list_edit.Length; ++u) {
-                                for (int v = u + 1; v < card_list_edit.Length; ++v) {
-                                    for (int w = v + 1; w < card_list_edit.Length; ++w) {       //これなんとかならんの？？？
+                    for(int s = 0; s < card_list_edit.Count(); ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
+                        for(int t = s + 1; t < card_list_edit.Count(); ++t) {
+                            for (int u = t + 1; u < card_list_edit.Count(); ++u) {
+                                for (int v = u + 1; v < card_list_edit.Count(); ++v) {
+                                    for (int w = v + 1; w < card_list_edit.Count(); ++w) {       //これなんとかならんの？？？
                                         Card[] board = new Card[] { card_list_edit[s], card_list_edit[t], card_list_edit[u], card_list_edit[v], card_list_edit[w] };
                                         FinalHand 
                                             f_p1 = evaluator.Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
@@ -115,14 +116,14 @@ namespace pokercsharp.mainsource.appendix {
                                 continue;
                             }
                             CardValue 
-                                cv_i0 = hand_arr[i][0].GetCardValue(),
-                                cv_i1 = hand_arr[i][1].GetCardValue(),
-                                cv_j0 = hand_arr[j][0].GetCardValue(),
-                                cv_j1 = hand_arr[j][1].GetCardValue(),
-                                cv_i_0 = hand_arr[i_][0].GetCardValue(),
-                                cv_i_1 = hand_arr[i_][1].GetCardValue(),
-                                cv_j_0 = hand_arr[j_][0].GetCardValue(),
-                                cv_j_1 = hand_arr[j_][1].GetCardValue();
+                                cv_i0 = hand_arr[i][0].GetValue(),
+                                cv_i1 = hand_arr[i][1].GetValue(),
+                                cv_j0 = hand_arr[j][0].GetValue(),
+                                cv_j1 = hand_arr[j][1].GetValue(),
+                                cv_i_0 = hand_arr[i_][0].GetValue(),
+                                cv_i_1 = hand_arr[i_][1].GetValue(),
+                                cv_j_0 = hand_arr[j_][0].GetValue(),
+                                cv_j_1 = hand_arr[j_][1].GetValue();
                             Suit 
                                 s_i0 = hand_arr[i][0].GetSuit(),
                                 s_i1 = hand_arr[i][1].GetSuit(),

@@ -25,8 +25,12 @@ namespace pokercsharp
         {
             InitializeComponent();
             Console.WriteLine("Hello!");
+            FinalHandsDict finalHandsDict = new FinalHandsDict();
+            finalHandsDict.Init();
+            /*
             WinRateGrid winRateGrid = new WinRateGrid();
             winRateGrid.Init();
+            */
         }
     }
 }

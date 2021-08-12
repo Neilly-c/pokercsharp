@@ -21,7 +21,7 @@ namespace mainsource.system.card {
         }
 
         public int GetNumber() {
-            return this.value.GetValue() + 13 * this.suit.GetValue() - 14;
+            return this.value.GetValue() + 13 * this.suit.GetValue() - 13;
         }
 
         public override string ToString() {
@@ -60,7 +60,10 @@ namespace mainsource.system.card {
             if (!iamAnAce && otherIsAnAce) {
                 return -1;
             }
-            return this.value.CompareTo(o.GetValue());
+            if (this.value.CompareTo(o.GetValue()) != 0) {
+                return this.value.CompareTo(o.GetValue());
+            }
+            return this.suit.CompareTo(o.GetSuit());
         }
     }
 }
