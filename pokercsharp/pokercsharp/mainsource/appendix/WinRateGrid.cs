@@ -141,7 +141,7 @@ namespace pokercsharp.mainsource.appendix {
                               && s_i0.Equals(s_j1) == s_i_0.Equals(s_j_1)
                               && s_i1.Equals(s_j0) == s_i_1.Equals(s_j_0)
                               && s_i1.Equals(s_j1) == s_i_1.Equals(s_j_1)
-                              && s_j0.Equals(s_j1) == s_j_0.Equals(s_j_1)){     //6通り全部の組み合わせが同じなら同じと見なす
+                              && s_j0.Equals(s_j1) == s_j_0.Equals(s_j_1)){     //6通り全部の組み合わせが同じなら同じと見なす これだと若干抜けがあるけど
                                 full_grid[i_][j_] = winCount;
                                 full_grid[j_][i_] = count - winCount;
                                 Debug.Write(hand_arr[i_][0].ToAbbreviateString() + hand_arr[i_][1].ToAbbreviateString() + "-"
