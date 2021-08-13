@@ -1,5 +1,6 @@
 using mainsource.system.card;
 using mainsource.system.handvalue;
+using pokercsharp.mainsource.appendix;
 using System;
 
 namespace mainsource.system.evaluator {
@@ -44,10 +45,14 @@ namespace mainsource.system.evaluator {
                             ++count;
                         }
                     }
+                    Array.Sort(cards_picked);
+                    Array.Reverse(cards_picked);
+
                     FinalHand temp_result = base.Evaluate(cards_picked);
                     if (temp_result.CompareTo(result) > 0) {
                         result = temp_result;
                     }
+
                 }
             }
             return result;

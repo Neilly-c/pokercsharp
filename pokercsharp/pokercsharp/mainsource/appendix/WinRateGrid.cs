@@ -4,13 +4,17 @@ using mainsource.system.handvalue;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace pokercsharp.mainsource.appendix {
-    class WinRateGrid {
+    class WinRateGrid : HandEvaluator {
         const int COMBINATION = 1326;
         const int FULL_DECK_LEN = 52;
+        const int HOLDEM_HAND_CARDS = 7;
+        const int COM_2 = 878485;
+        const int _48C5 = 1712304;
 
         public void Init() {
             int[][] full_grid = new int[COMBINATION][];     //1326*1326
@@ -74,8 +78,6 @@ namespace pokercsharp.mainsource.appendix {
                     }
                     
                     int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
-                    Stopwatch sw = new Stopwatch();     //処理時間計測用
-                    sw.Start();
                     for(int s = 0; s < card_list_edit.Count(); ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
                         for(int t = s + 1; t < card_list_edit.Count(); ++t) {
                             for (int u = t + 1; u < card_list_edit.Count(); ++u) {
@@ -91,10 +93,8 @@ namespace pokercsharp.mainsource.appendix {
                                             winCount += 1;
                                         }
                                         count += 2;
-                                        if(count % 20000 == 19998) {
-                                            sw.Stop();
-                                            Debug.WriteLine($"　{sw.ElapsedMilliseconds}ミリ秒");
-                                            sw.Start();
+                                        if (count / (_48C5 / 50) - (count - 1) / (_48C5 / 50) != 0) {
+                                            Debug.WriteLine(count / (_48C5 / 50) + " % count");
                                         }
                                     }
                                 }
@@ -106,7 +106,7 @@ namespace pokercsharp.mainsource.appendix {
                     full_grid[j][i] = count - winCount; //逆のマッチアップは勝率も逆にしておく
 
                     ++loop;
-                    Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
+                    Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
                         + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " + 
                         loop + " complete, " + full_grid[i][j] + "-" + full_grid[j][i]);
                     
@@ -144,27 +144,62 @@ namespace pokercsharp.mainsource.appendix {
                               && s_j0.Equals(s_j1) == s_j_0.Equals(s_j_1)){     //6通り全部の組み合わせが同じなら同じと見なす これだと若干抜けがあるけど
                                 full_grid[i_][j_] = winCount;
                                 full_grid[j_][i_] = count - winCount;
-                                Debug.Write(hand_arr[i_][0].ToAbbreviateString() + hand_arr[i_][1].ToAbbreviateString() + "-"
+                                Debug.WriteLine(hand_arr[i_][0].ToAbbreviateString() + hand_arr[i_][1].ToAbbreviateString() + "-"
                                     + hand_arr[j_][0].ToAbbreviateString() + hand_arr[j_][1].ToAbbreviateString() + ", " + 
                                     " same as the former's, " + full_grid[i_][j_] + "-" + full_grid[j_][i_]);
                             }
                         }
                     }
-                    
+
+                    if (loop / (COM_2 / 100) - (loop - 1) / (COM_2 / 100) != 0) {
+                        Debug.WriteLine(loop / (COM_2 / 100) + " % complete");
+                    }
+
                 }
             }
 
             for(int i = 0; i < COMBINATION; ++i) {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
+                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
+                    hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString());
                 if (i % 50 == 49) {
                     Debug.WriteLine("");
+                    File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt", ", ");
+                } else {
+                    File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt", Environment.NewLine);
                 }
             }
 
             for (int i = 0; i < COMBINATION; ++i) {
-                Debug.WriteLine(string.Join(", ", full_grid[i]));
+                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
+                    string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
 
+        }
+
+        public new FinalHand Evaluate(Card[] cards) {
+            FinalHand result = new FinalHand(HandName.HIGH_CARD, new OptionValue(CardValue.TWO));
+            Card[] cards_picked = new Card[5];
+            for (int i = 0; i < HOLDEM_HAND_CARDS - 1; ++i) {
+                for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
+                    int count = 0;
+                    for (int k = 0; k < HOLDEM_HAND_CARDS; ++k) {
+                        if (k != i && k != j) {
+                            cards_picked[count] = cards[k];
+                            ++count;
+                        }
+                    }
+                    Array.Sort(cards_picked);
+                    Array.Reverse(cards_picked);
+
+                    FinalHand temp_result = FinalHandsDict.finalDict[FinalHandsDict.GetHashFromCards(cards_picked)];
+                    if (temp_result.CompareTo(result) > 0) {
+                        result = temp_result;
+                    }
+
+                }
+            }
+            return result;
         }
 
         private bool IsAllDifferent(params int[] ints) {

@@ -106,18 +106,18 @@ namespace mainsource.system.handvalue {
                 case HandName.STRAIGHT:
                     return getValue1().ToString() + " high";
                 case HandName.QUADS:
-                    return getValue1().ToString() + ", kicker " + getValue2().ToString();
+                    return getValue1().ToString() + " kicker " + getValue2().ToString();
                 case HandName.FULL_HOUSE:
                     return getValue1().ToString() + " full of " + getValue2().ToString();
                 case HandName.FLUSH:
                 case HandName.HIGH_CARD:
-                    return getValue1().ToString() + "high, " + getValue2().ToString() + ", " + getValue3() + ", " + getValue4() + ", " + getValue5();
+                    return getValue1().ToString() + " high " + getValue2().ToString() + " " + getValue3() + " " + getValue4() + " " + getValue5();
                 case HandName.SET:
-                    return getValue1().ToString() + ", kicker " + getValue2().ToString() + ", " + getValue3().ToString();
+                    return getValue1().ToString() + " kicker " + getValue2().ToString() + " " + getValue3().ToString();
                 case HandName.TWO_PAIRS:
-                    return getValue1().ToString() + ", " + getValue2().ToString() + ", kicker " + getValue3().ToString();
+                    return getValue1().ToString() + " " + getValue2().ToString() + " kicker " + getValue3().ToString();
                 case HandName.ONE_PAIR:
-                    return getValue1().ToString() + ", kicker " + getValue2().ToString() + ", " + getValue3().ToString() + ", " + getValue4().ToString();
+                    return getValue1().ToString() + " kicker " + getValue2().ToString() + " " + getValue3().ToString() + " " + getValue4().ToString();
             }
             return getValue1().ToString();
         }

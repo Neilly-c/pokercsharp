@@ -25,7 +25,7 @@ namespace mainsource.system.handvalue {
         }
 
         public override string ToString() {
-            return this.handName.ToString() + ", " + this.optionValue.GetDetail(this.handName);
+            return this.handName.ToString() + " " + this.optionValue.GetDetail(this.handName);
         }
 
         public int CompareTo(FinalHand o) {

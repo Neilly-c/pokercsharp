@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj": {}
+    "D:\\Csharp\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj": {}
   },
   "projects": {
-    "D:\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj": {
+    "D:\\Csharp\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj",
+        "projectUniqueName": "D:\\Csharp\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj",
         "projectName": "pokercsharp",
-        "projectPath": "D:\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj",
-        "packagesPath": "C:\\Users\\Neilly_parfait\\.nuget\\packages\\",
-        "outputPath": "D:\\pokercsharp\\pokercsharp\\pokercsharp\\obj\\",
+        "projectPath": "D:\\Csharp\\pokercsharp\\pokercsharp\\pokercsharp\\pokercsharp.csproj",
+        "packagesPath": "C:\\Users\\Neilly C\\.nuget\\packages\\",
+        "outputPath": "D:\\Csharp\\pokercsharp\\pokercsharp\\pokercsharp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Neilly_parfait\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Neilly C\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

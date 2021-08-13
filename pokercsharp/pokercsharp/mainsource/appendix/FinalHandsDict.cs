@@ -4,6 +4,7 @@ using mainsource.system.handvalue;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace pokercsharp.mainsource.appendix {
@@ -12,8 +13,8 @@ namespace pokercsharp.mainsource.appendix {
         const int HOLDEM_HAND_CARDS = 7;
         const int _52C5 = 2598960;
         const int _52C7 = 133784560;
-        static Dictionary<int, FinalHand> finalDict = new Dictionary<int, FinalHand>();
-        static Dictionary<int, int> finalHoldemDict = new Dictionary<int, int>();
+        public static Dictionary<int, FinalHand> finalDict = new Dictionary<int, FinalHand>();
+        static Dictionary<long, int> finalHoldemDict = new Dictionary<long, int>();
 
         public void Init() {
 
@@ -29,7 +30,10 @@ namespace pokercsharp.mainsource.appendix {
 
             int loop = 0;
             HandEvaluator evaluator = new HandEvaluator();
-
+            /*
+            File.WriteAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
+                "All poker hands " + Environment.NewLine);
+            */
             for (int a = 0; a < FULL_DECK_LEN; ++a) {
                 for (int b = a + 1; b < FULL_DECK_LEN; ++b) {
                     for (int c = b + 1; c < FULL_DECK_LEN; ++c) {
@@ -37,8 +41,16 @@ namespace pokercsharp.mainsource.appendix {
                             for (int e = d + 1; e < FULL_DECK_LEN; ++e) {
                                 Card[] cards = new Card[] { card_arr[a], card_arr[b], card_arr[c], card_arr[d], card_arr[e] };
                                 int hash = GetHashFromCards(cards);
-                                finalDict.Add(hash, evaluator.Evaluate(cards));
-
+                                FinalHand fh = evaluator.Evaluate(cards);
+                                finalDict.Add(hash, fh);
+                                /*
+                                for (int i = 0; i < cards.Length; ++i) {
+                                    File.AppendAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
+                                        cards[i].ToAbbreviateString() + ", ");
+                                }
+                                File.AppendAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
+                                    fh.ToString() + Environment.NewLine);
+                                */
                                 ++loop;
                                 if ((loop / (_52C5 / 100)) - ((loop - 1) / (_52C5 / 100)) != 0) {
                                     Debug.WriteLine(loop / (_52C5 / 100) + "% complete");
@@ -48,7 +60,7 @@ namespace pokercsharp.mainsource.appendix {
                     }
                 }
             }
-
+            /*
             int loop2 = 0;
 
             for (int a = 0; a < FULL_DECK_LEN; ++a) {
@@ -60,7 +72,7 @@ namespace pokercsharp.mainsource.appendix {
                                     for (int g = f + 1; g < FULL_DECK_LEN; ++g) {
                                         Card[] hand_n_board = new Card[]{card_arr[a], card_arr[b], card_arr[c], card_arr[d]
                                                                          , card_arr[e], card_arr[f], card_arr[g]};
-                                        int keyHash = GetHashFromCards(hand_n_board);
+                                        long keyHash = GetHashFromCards(hand_n_board);
                                         FinalHand fh = Evaluate(hand_n_board);
                                         int valueHash = fh.GetHashCode();
                                         finalHoldemDict.Add(keyHash, valueHash);
@@ -78,7 +90,7 @@ namespace pokercsharp.mainsource.appendix {
             }
 
             Debug.WriteLine(finalHoldemDict.Count() + " items complete");
-
+            */
         }
 
         public FinalHand Evaluate(Card[] cards) {
@@ -103,14 +115,14 @@ namespace pokercsharp.mainsource.appendix {
             return result;
         }
 
-        private int GetHashFromCards(Card[] cards) {
+        public static int GetHashFromCards(Card[] cards) {
             Array.Sort(cards);
             Array.Reverse(cards);
             int keyHash = 0;
             for (int i = 0; i < cards.Length; ++i) {
-                keyHash += (int)cards[i].GetNumber();
+                keyHash |= cards[i].GetNumber();
                 if (i < cards.Length - 1) {
-                    keyHash *= 53;
+                    keyHash <<= 6;
                 }
             }
             return keyHash;
