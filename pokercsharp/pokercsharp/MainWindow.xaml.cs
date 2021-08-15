@@ -1,4 +1,5 @@
 ﻿using pokercsharp.mainsource.appendix;
+using pokercsharp.mainsource.cfrplus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +26,15 @@ namespace pokercsharp
         {
             InitializeComponent();
             Console.WriteLine("Hello!");
+
+            KuhnPoker kp = new KuhnPoker();
+
+            /*
             FinalHandsDict finalHandsDict = new FinalHandsDict();
             finalHandsDict.Init();
             WinRateGrid winRateGrid = new WinRateGrid();
             winRateGrid.Init();
+            */
         }
     }
 }
