@@ -20,8 +20,8 @@ namespace mainsource.system.card {
             return suit;
         }
 
-        public int GetNumber() {
-            return this.value.GetValue() + 13 * this.suit.GetValue() - 13;
+        public int GetNumber() {        //0~51
+            return 13 * this.suit.GetValue() - this.value.GetValue();
         }
 
         public override string ToString() {
@@ -46,9 +46,7 @@ namespace mainsource.system.card {
         }
 
         public override int GetHashCode() {
-            int result = (int)GetValue();
-            result = 31 * result + (int)GetSuit();
-            return result;
+            return GetNumber();
         }
 
         public int CompareTo(Card o) {
