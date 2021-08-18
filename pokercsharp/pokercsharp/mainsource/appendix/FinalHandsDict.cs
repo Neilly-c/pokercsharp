@@ -14,6 +14,7 @@ namespace pokercsharp.mainsource.appendix {
         const int _52C5 = 2598960;
         const int _52C7 = 133784560;
         public static Dictionary<int, FinalHand> finalDict = new Dictionary<int, FinalHand>();
+		public static int[][][][][] finalDictHash = new int[52][][][][];
         static Dictionary<long, int> finalHoldemDict = new Dictionary<long, int>();
 
         public void Init() {
@@ -30,6 +31,30 @@ namespace pokercsharp.mainsource.appendix {
 
             int loop = 0;
             HandEvaluator evaluator = new HandEvaluator();
+			
+            for (int a = 4; a < finalDictArr.Length; ++a) {
+				finalDictArr[a] = new int[a][][][];
+                for (int b = 3; b < finalDictArr[a].Length; ++b) {
+					finalDictArr[a][b] = new int[b][][];
+                    for (int c = 2; c < finalDIctArr[a][b].Length; ++c) {
+						finalDictArr[a][b][c] = new int[c][];
+                        for (int d = 1; d < finalDictArr[a][b][c].Length; ++d) {
+							finalDictArr[a][b][c][d] = new int[d];
+                            for (int e = 0; e < FULL_DECK_LEN; ++e) {
+                                Card[] cards = new Card[] { card_arr[a], card_arr[b], card_arr[c], card_arr[d], card_arr[e] };		//あとでカード序列を確認すること
+                                FinalHand fh = evaluator.Evaluate(cards);
+                                finalDictArr[a][b][c][d][e] = fh.getHashCode();
+                                ++loop;
+                                if ((loop / (_52C5 / 100)) - ((loop - 1) / (_52C5 / 100)) != 0) {
+                                    Debug.WriteLine(loop / (_52C5 / 100) + "% complete");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+			
+			loop = 0;
             /*
             File.WriteAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
                 "All poker hands " + Environment.NewLine);
