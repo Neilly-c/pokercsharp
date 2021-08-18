@@ -4,15 +4,15 @@ using System.Text;
 
 namespace pokercsharp.mainsource.cfrplus {
     public class Node {
-        private Dictionary<string, Node> children = new Dictionary<string, Node>();
-        private int player;
-        private bool isTerminal = false;
+        public Dictionary<string, Node> children = new Dictionary<string, Node>();
+        public int player;
+        public bool isTerminal = false;
         private int[] cards = new int[2];
-        private string history = "";
-        private string information = "";
+        public string history = "";
+        public string information = "";
 
-        private double reach_possibility;
-        private double rp_mi, rp_i;
+        public double reach_possibility;
+        public double rp_mi, rp_i;
         private double expected_profit;
         private double counterfactual_value;
         private Dictionary<string, double> counterfactual_regret = new Dictionary<string, double>();
