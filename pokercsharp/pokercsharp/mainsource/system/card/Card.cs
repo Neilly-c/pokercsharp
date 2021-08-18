@@ -50,6 +50,7 @@ namespace mainsource.system.card {
         }
 
         public int CompareTo(Card o) {
+            /*
             bool otherIsAnAce = CardValue.ACE.Equals(o.GetValue());
             bool iamAnAce = CardValue.ACE.Equals(this.value);
             if (iamAnAce && !otherIsAnAce) {
@@ -62,6 +63,8 @@ namespace mainsource.system.card {
                 return this.value.CompareTo(o.GetValue());
             }
             return this.suit.CompareTo(o.GetSuit());
+            */
+            return this.GetHashCode() - o.GetHashCode();
         }
     }
 }

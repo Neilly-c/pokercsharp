@@ -27,14 +27,14 @@ namespace pokercsharp
             InitializeComponent();
             Console.WriteLine("Hello!");
 
-            KuhnPoker kp = new KuhnPoker();
+            //KuhnPoker kp = new KuhnPoker();
 
-            /*
+            
             FinalHandsDict finalHandsDict = new FinalHandsDict();
             finalHandsDict.Init();
             WinRateGrid winRateGrid = new WinRateGrid();
             winRateGrid.Init();
-            */
+            
         }
     }
 }

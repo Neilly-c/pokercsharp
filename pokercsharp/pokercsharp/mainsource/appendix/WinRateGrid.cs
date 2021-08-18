@@ -1,6 +1,7 @@
 ﻿using mainsource.system.card;
 using mainsource.system.evaluator;
 using mainsource.system.handvalue;
+using pokercsharp.mainsource.system.card;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 
 namespace pokercsharp.mainsource.appendix {
-    class WinRateGrid : HandEvaluator {
+    class WinRateGrid {
         const int COMBINATION = 1326;
         const int FULL_DECK_LEN = 52;
         const int HOLDEM_HAND_CARDS = 7;
@@ -18,14 +19,12 @@ namespace pokercsharp.mainsource.appendix {
 
         public void Init() {
             int[][] full_grid = new int[COMBINATION][];     //1326*1326
-            Card[] card_arr = new Card[FULL_DECK_LEN];      //ただの52枚のカードの配列
+            FullCardArr fca = new FullCardArr();
+            Card[] card_arr = fca.GetCardArr();             //ただの52枚の配列
             Card[][] hand_arr = new Card[COMBINATION][];    //1326通りのハンドの配列
             for (int i = 0; i < COMBINATION; ++i) {
                 full_grid[i] = new int[COMBINATION];
                 hand_arr[i] = new Card[2];                  //配列初期化処理(javaと違って2次元配列はこうやって定義しないといけないらしい)
-            }
-            for(int i = 0; i < FULL_DECK_LEN; ++i) {
-                card_arr[i] = new Card(CardValueExt.GetCardValueFromInt(1 + (i / 4)), SuitExt.GetSuitFromInt(1 + (i % 4)));     //カード配列生成
             }
 
             int iter = 0;
@@ -38,7 +37,6 @@ namespace pokercsharp.mainsource.appendix {
             }
 
             int loop = 0;
-            HoldemHandEvaluator evaluator = new HoldemHandEvaluator();  //ハンド評価クラス　当たり前だけどこれが軽くなればだいぶ変わる
 
             for(int i = 0; i < COMBINATION; ++i) {
                 for(int j = i + 1; j < COMBINATION; ++j) {      // 1326 * 1325 / 2 = 878475 loops.
@@ -67,26 +65,31 @@ namespace pokercsharp.mainsource.appendix {
                         full_grid[j][i] = -1;
                         continue;
                     }
-                    List<Card> card_list_edit = new List<Card>(card_arr);   //すでに使っているカードをデッキから除く
-                    card_list_edit.Remove(hand_arr[i][0]);
-                    card_list_edit.Remove(hand_arr[i][1]);
-                    card_list_edit.Remove(hand_arr[j][0]);
-                    card_list_edit.Remove(hand_arr[j][1]);
-                    
-                    if(card_list_edit.Count() != 48){
-                        Debug.WriteLine("HALT!!!");
-                    }
                     
                     int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
-                    for(int s = 0; s < card_list_edit.Count(); ++s) {            //52_C_5 = 2598960 -> 48_C_5 = 1712304 loops.
-                        for(int t = s + 1; t < card_list_edit.Count(); ++t) {
-                            for (int u = t + 1; u < card_list_edit.Count(); ++u) {
-                                for (int v = u + 1; v < card_list_edit.Count(); ++v) {
-                                    for (int w = v + 1; w < card_list_edit.Count(); ++w) {       //これなんとかならんの？？？
-                                        Card[] board = new Card[] { card_list_edit[s], card_list_edit[t], card_list_edit[u], card_list_edit[v], card_list_edit[w] };
-                                        FinalHand 
-                                            f_p1 = evaluator.Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
-                                            f_p2 = evaluator.Evaluate(hand_arr[j], board);
+                    for (int a = 4; a < FULL_DECK_LEN; ++a) {
+                        if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, a)) {
+                            continue;
+                        }
+                        for (int b = 3; b < a; ++b) {
+                            if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, b)) {
+                                continue;
+                            }
+                            for (int c = 2; c < b; ++c) {
+                                if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, c)) {
+                                    continue;
+                                }
+                                for (int d = 1; d < c; ++d) {
+                                    if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, d)) {
+                                        continue;
+                                    }
+                                    for (int e = 0; e < d; ++e) {
+                                        if (!IsAllDifferent(p1_0, p1_1, p2_0, p2_1, e)) {
+                                            continue;
+                                        }
+                                        Card[] board = new Card[] { card_arr[a], card_arr[b], card_arr[c], card_arr[d], card_arr[e] };
+                                        int f_p1 = Evaluate(hand_arr[i], board),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
+                                            f_p2 = Evaluate(hand_arr[j], board);
                                         if(f_p1.CompareTo(f_p2) > 0) {  //クラスFinalHandはIComparableを継承しているのでCompareTo()で比較できる 比較大なら勝ち
                                             winCount += 2;
                                         }else if(f_p1.CompareTo(f_p2) == 0) {   //イコールなら引き分け
@@ -177,9 +180,33 @@ namespace pokercsharp.mainsource.appendix {
 
         }
 
-        public new FinalHand Evaluate(Card[] cards) {
-            FinalHand result = new FinalHand(HandName.HIGH_CARD, new OptionValue(CardValue.TWO));
+        public int Evaluate(params Card[][] cards) {
+            int len = 0;
+            for (int i = 0; i < cards.Length; ++i) {
+                len += cards[i].Length;
+            }
+            Card[] concatCards = new Card[len];
+            len = 0;
+            for (int i = 0; i < cards.Length; ++i) {
+                Array.Copy(cards[i], 0, concatCards, len, cards[i].Length);
+                len += cards[i].Length;
+            }
+            return Evaluate(concatCards);
+        }
+
+        public int Evaluate(Card[] cards) {
+            if (cards.Length != HOLDEM_HAND_CARDS) {
+                throw new EvaluatorException("evaluating HOLDEM hand Length is illegal");
+            }
+            for (int i = 0; i < HOLDEM_HAND_CARDS; ++i) {
+                for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
+                    if (cards[i].GetNumber() == cards[j].GetNumber()) {
+                        throw new EvaluatorException("Array cards have two or more same cards");
+                    }
+                }
+            }
             Card[] cards_picked = new Card[5];
+            int result = 0;
             for (int i = 0; i < HOLDEM_HAND_CARDS - 1; ++i) {
                 for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
                     int count = 0;
@@ -192,8 +219,8 @@ namespace pokercsharp.mainsource.appendix {
                     Array.Sort(cards_picked);
                     Array.Reverse(cards_picked);
 
-                    FinalHand temp_result = FinalHandsDict.finalDict[FinalHandsDict.GetHashFromCards(cards_picked)];
-                    if (temp_result.CompareTo(result) > 0) {
+                    int temp_result = FinalHandsDict.EvaluateByHash(cards_picked);
+                    if (temp_result > result) {
                         result = temp_result;
                     }
 
