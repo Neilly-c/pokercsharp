@@ -83,10 +83,10 @@ namespace pokercsharp.mainsource.appendix {
                                                     } else if (f_p1 == f_p2) {   //イコールなら引き分け
                                                         winCount += 1;
                                                     }
-                                                    count += 2;
+                                                    count += 2;/*
                                                     if (count / (_48C5 / 5) - (count - 1) / (_48C5 / 5) != 0) {
                                                         Debug.WriteLine(count / (_48C5 / 50) + " % count");
-                                                    }
+                                                    }*/
                                                 }
                                             }
                                         }
@@ -100,7 +100,7 @@ namespace pokercsharp.mainsource.appendix {
                             loop += 2;
                             Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
                                 + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " +
-                                loop + " complete, " + full_grid[i][j] + "-" + full_grid[j][i]);
+                                (loop / 2) + " complete, " + full_grid[i][j] + "-" + full_grid[j][i]);
 
                             for (int i_ = i; i_ < COMBINATION; ++i_) {       //計算省略できるところを省略するために調査する
                                 for (int j_ = i_ + 1; j_ < COMBINATION; ++j_) {      // MAX 1326 * 1325 / 2 = 878475 loops.
@@ -143,13 +143,10 @@ namespace pokercsharp.mainsource.appendix {
                                     }
                                 }
                             }
-
-                            if (loop / (COM_2 / 100) - (loop - 1) / (COM_2 / 100) != 0) {
-                                Debug.WriteLine(loop / (COM_2 / 100) + " % complete");
-                            }
                         }
                     }
                 });
+                Debug.WriteLine("Line " + i + " complete");
             }
 
             for (int i = 0; i < COMBINATION; ++i) {
