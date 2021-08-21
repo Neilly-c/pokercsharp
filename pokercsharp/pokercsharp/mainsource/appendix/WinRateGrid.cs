@@ -43,8 +43,11 @@ namespace pokercsharp.mainsource.appendix {
 
             int loop = 0;
 
+            ParallelOptions option = new ParallelOptions();
+            option.MaxDegreeOfParallelism = 6;
+
             for (int i = 0; i < COMBINATION; ++i) {
-                Parallel.For(i + 1, COMBINATION, j => {      // 1326 * 1325 / 2 = 878475 loops.
+                Parallel.For(i + 1, COMBINATION, option, j => {      // 1326 * 1325 / 2 = 878475 loops.
 
                     if (full_grid[i][j] == 0) {
 
@@ -169,13 +172,6 @@ namespace pokercsharp.mainsource.appendix {
         }
 
         public int Evaluate(params int[] cards_int) {
-            for (int i = 0; i < HOLDEM_HAND_CARDS; ++i) {
-                for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
-                    if (cards_int[i] == cards_int[j]) {
-                        throw new EvaluatorException("Array cards have two or more same cards");
-                    }
-                }
-            }
             int[] cards_picked_int = new int[5];
             int result = 0;
             for (int i = 0; i < HOLDEM_HAND_CARDS - 1; ++i) {
