@@ -33,6 +33,9 @@ namespace pokercsharp.mainsource.appendix {
             int loop = 0;
             HandEvaluator evaluator = new HandEvaluator();
 
+            ParallelOptions option = new ParallelOptions();
+            option.MaxDegreeOfParallelism = 6;
+
             for (int a = 4; a < FULL_DECK_LEN; ++a) {
                 finalDictArr[a] = new int[a][][][];
                 for (int b = 3; b < a; ++b) {
@@ -41,7 +44,7 @@ namespace pokercsharp.mainsource.appendix {
                         finalDictArr[a][b][c] = new int[c][];
                         for (int d = 1; d < c; ++d) {
                             finalDictArr[a][b][c][d] = new int[d];
-                            Parallel.For(0, d, e => {
+                            Parallel.For(0, d, option, e => {
                                 Card[] cards = new Card[] { card_arr[a], card_arr[b], card_arr[c], card_arr[d], card_arr[e] };      //あとでカード序列を確認すること
                                 FinalHand fh = evaluator.Evaluate(cards);
                                 finalDictArr[a][b][c][d][e] = fh.GetHashCode();
