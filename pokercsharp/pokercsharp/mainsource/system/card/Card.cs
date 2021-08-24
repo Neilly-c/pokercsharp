@@ -20,10 +20,6 @@ namespace mainsource.system.card {
             return suit;
         }
 
-        public int GetNumber() {        //0~51
-            return 13 * this.suit.GetValue() - this.value.GetValue();
-        }
-
         public override string ToString() {
             return this.value.ToString() + " of " + this.suit.ToString() + ": " + this.GetNumber();
         }
@@ -46,11 +42,10 @@ namespace mainsource.system.card {
         }
 
         public override int GetHashCode() {
-            return GetNumber();
+            return 13 * this.suit.GetValue() - this.value.GetValue();
         }
 
-        public int CompareTo(Card o) {
-            /*
+        public int CompareTo(Card o) {      //As,Ah,...,2d,2cの順
             bool otherIsAnAce = CardValue.ACE.Equals(o.GetValue());
             bool iamAnAce = CardValue.ACE.Equals(this.value);
             if (iamAnAce && !otherIsAnAce) {
@@ -63,8 +58,6 @@ namespace mainsource.system.card {
                 return this.value.CompareTo(o.GetValue());
             }
             return this.suit.CompareTo(o.GetSuit());
-            */
-            return this.GetHashCode() - o.GetHashCode();
         }
     }
 }
