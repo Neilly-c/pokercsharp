@@ -12,12 +12,9 @@ using System.Threading.Tasks;
 namespace pokercsharp.mainsource.appendix {
     class FinalHandsDict {
         const int FULL_DECK_LEN = 52;
-        const int HOLDEM_HAND_CARDS = 7;
         const int _52C5 = 2598960;
-        const int _52C7 = 133784560;
         public static Dictionary<int, FinalHand> finalDict = new Dictionary<int, FinalHand>();
         public static int[][][][][] finalDictArr = new int[52][][][][];
-        static Dictionary<long, int> finalHoldemDict = new Dictionary<long, int>();
         static Card[] card_arr;
 
         public void Init() {
@@ -49,6 +46,12 @@ namespace pokercsharp.mainsource.appendix {
                                 FinalHand fh = evaluator.Evaluate(cards);
                                 finalDictArr[a][b][c][d][e] = fh.GetHashCode();
                                 ++loop;
+                                /*
+                                foreach(Card card in cards) {
+                                    File.AppendAllText(@"D:\Csharp\pokercsharp\finalHandsDict.txt", card.ToAbbreviateString());
+                                }
+                                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
+                                    "," + fh.ToString() + ", " + fh.GetHashCode() +  Environment.NewLine);*/
                                 if ((loop / (_52C5 / 100)) - ((loop - 1) / (_52C5 / 100)) != 0) {
                                     Debug.WriteLine(loop / (_52C5 / 100) + "% complete");
                                 }
@@ -57,38 +60,6 @@ namespace pokercsharp.mainsource.appendix {
                     }
                 }
             }
-
-            //loop = 0;
-            /*
-            File.WriteAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
-                "All poker hands " + Environment.NewLine);
-            
-            for (int a = 0; a < FULL_DECK_LEN; ++a) {
-                for (int b = a + 1; b < FULL_DECK_LEN; ++b) {
-                    for (int c = b + 1; c < FULL_DECK_LEN; ++c) {
-                        for (int d = c + 1; d < FULL_DECK_LEN; ++d) {
-                            for (int e = d + 1; e < FULL_DECK_LEN; ++e) {
-                                Card[] cards = new Card[] { card_arr[a], card_arr[b], card_arr[c], card_arr[d], card_arr[e] };
-                                int hash = GetHashFromCards(cards);
-                                FinalHand fh = evaluator.Evaluate(cards);
-                                finalDict.Add(hash, fh);
-                                
-                                for (int i = 0; i < cards.Length; ++i) {
-                                    File.AppendAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
-                                        cards[i].ToAbbreviateString() + ", ");
-                                }
-                                File.AppendAllText(@"D:\Csharp\pokercsharp\finalHands.txt",
-                                    fh.ToString() + Environment.NewLine);
-                                
-                                ++loop;
-                                if ((loop / (_52C5 / 100)) - ((loop - 1) / (_52C5 / 100)) != 0) {
-                                    Debug.WriteLine(loop / (_52C5 / 100) + "% complete");
-                                }
-                            }
-                        }
-                    }
-                }
-            }*/
 
         }
 

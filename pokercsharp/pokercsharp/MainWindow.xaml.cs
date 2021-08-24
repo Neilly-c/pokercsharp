@@ -31,7 +31,15 @@ namespace pokercsharp {
         public MainWindow() {
             InitializeComponent();
             Debug.WriteLine("Hello!");
+            //InitView();
 
+            FinalHandsDict finalHandsDict = new FinalHandsDict();
+            finalHandsDict.Init();
+            WinRateGrid winRateGrid = new WinRateGrid();
+            winRateGrid.Init();
+        }
+
+        private void InitView() {
             ScrollViewer scrollViewer = this.FindName("baseScroll") as ScrollViewer;
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
             scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -67,12 +75,6 @@ namespace pokercsharp {
             scrollViewer.Content = fullGrid;
             Debug.WriteLine("Hello!");
 
-            /*
-            FinalHandsDict finalHandsDict = new FinalHandsDict();
-            finalHandsDict.Init();
-            WinRateGrid winRateGrid = new WinRateGrid();
-            winRateGrid.Init();
-            */
         }
 
         private void ReadFile() {

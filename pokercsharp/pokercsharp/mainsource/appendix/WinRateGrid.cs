@@ -62,6 +62,9 @@ namespace pokercsharp.mainsource.appendix {
 
             Debug.WriteLine("size of intList_needs_compute = " + intList_for_compute.Count() + " (169)");
 
+            intList_for_compute.Clear();
+            intList_for_compute.Add(585);
+
             int loop = 0;
 
             ParallelOptions option = new ParallelOptions();
@@ -78,7 +81,7 @@ namespace pokercsharp.mainsource.appendix {
                             full_grid[j][i] = -1;
                         } else {
 
-                            int winCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
+                            int winCount = 0, evenCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
                             for (int a = 4; a < FULL_DECK_LEN; ++a) {
                                 if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], a)) {
                                     continue;
@@ -95,19 +98,16 @@ namespace pokercsharp.mainsource.appendix {
                                             if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], d)) {
                                                 continue;
                                             }
-                                            for (int e = 1; e < d; ++e) {
+                                            for (int e = 0; e < d; ++e) {
                                                 if (IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], e)) {
                                                     int f_p1 = Evaluate(hand_arr_int[i][0], hand_arr_int[i][1], a, b, c, d, e),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
                                                         f_p2 = Evaluate(hand_arr_int[j][0], hand_arr_int[j][1], a, b, c, d, e);
                                                     if (f_p1 > f_p2) {  //比較大なら勝ち
-                                                        winCount += 2;
+                                                        ++winCount;
                                                     } else if (f_p1 == f_p2) {   //イコールなら引き分け
-                                                        winCount += 1;
+                                                        ++evenCount;
                                                     }
-                                                    count += 2;/*
-                                                    if (count / (_48C5 / 5) - (count - 1) / (_48C5 / 5) != 0) {
-                                                        Debug.WriteLine(count / (_48C5 / 50) + " % count");
-                                                    }*/
+                                                    ++count;
                                                 }
                                             }
                                         }
@@ -115,12 +115,12 @@ namespace pokercsharp.mainsource.appendix {
                                 }
                             }
 
-                            full_grid[i][j] = winCount;         //集計して勝った回数を書いておく　実際に使う時は分母で割って確率を出せばよい(double型より軽く正確)
-                            full_grid[j][i] = count - winCount; //逆のマッチアップは勝率も逆にしておく
+                            full_grid[i][j] = winCount * 2 + evenCount;         //集計して勝った回数を書いておく　実際に使う時は分母で割って確率を出せばよい(double型より軽く正確)
+                            full_grid[j][i] = count * 2 - full_grid[i][j]; //逆のマッチアップは勝率も逆にしておく
 
                             Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
                                 + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " +
-                                loop + " complete(" + (loop * 100 / 224094) + "%), " + full_grid[i][j] + "-" + full_grid[j][i]);
+                                loop + " complete, " + full_grid[i][j] + "-" + full_grid[j][i] + " (" + winCount + ", " + evenCount + ", " + count + ")");
                             for (int i_ = i; i_ < COMBINATION; ++i_) {       //計算省略できるところを省略するために調査する
                                 for (int j_ = i_ + 1; j_ < COMBINATION; ++j_) {      // MAX 1326 * 1325 / 2 = 878475 loops.
                                     if (full_grid[i_][j_] != 0) {     //もう埋まってるところはパス
@@ -215,8 +215,11 @@ namespace pokercsharp.mainsource.appendix {
                 }
             }
 
+            ParallelOptions option = new ParallelOptions();
+            option.MaxDegreeOfParallelism = 6;
+
             int iter = 0;
-            for (int i = 0; i < FULL_DECK_LEN; ++i) {
+            Parallel.For (0, FULL_DECK_LEN, option, i => {
                 for (int j = i + 1; j < FULL_DECK_LEN; ++j) {       //ハンド配列生成
                     hand_arr[iter][0] = card_arr[i];
                     hand_arr[iter][1] = card_arr[j];
@@ -240,7 +243,7 @@ namespace pokercsharp.mainsource.appendix {
                     }
                     ++iter;
                 }
-            }
+            });
 
             int[][][] suitSwap = new int[][][]       //p0の持ってるスーツの組み合わせに応じてどう組み替えるか[p0の1枚目のスート][p0の2枚目のスート][組み替えるスート-1]
             { new int[][]{ new int[]{ 1, 2, 3, 4 }, new int[]{ 1, 2, 3, 4 }, new int[]{ 1, 3, 2, 4 }, new int[]{ 1, 4, 3, 2 } },
@@ -266,9 +269,13 @@ namespace pokercsharp.mainsource.appendix {
              * ss -> sdhc(c,s)
              */
 
-            for (int i = 0; i < COMBINATION; ++i) {
+            Parallel.For(0, COMBINATION, option, i => {
                 for (int j = 0; j < COMBINATION; ++j) {
                     if (full_grid[i][j] != 0) {
+                        continue;
+                    }
+                    if (i == j) {
+                        full_grid[i][j] = -1;
                         continue;
                     }
                     if (full_grid[j][i] != 0) {
@@ -278,21 +285,26 @@ namespace pokercsharp.mainsource.appendix {
                     Card plr0 = hand_arr[i][0], plr1 = hand_arr[i][1], vln0 = hand_arr[j][0], vln1 = hand_arr[j][1];
                     int x = valSwap[plr0.GetSuit().Equals(plr1.GetSuit()) ? 0 : 1][(int)plr0.GetValue() - 1][(int)plr1.GetValue() - 1]; //参照先x
                     vln0 = new Card(vln0.GetValue(), (Suit)suitSwap[(int)plr0.GetSuit() - 1][(int)plr1.GetSuit() - 1][(int)vln0.GetSuit() - 1]);
-                    vln1 = new Card(vln0.GetValue(), (Suit)suitSwap[(int)plr0.GetSuit() - 1][(int)plr1.GetSuit() - 1][(int)vln1.GetSuit() - 1]);
+                    vln1 = new Card(vln1.GetValue(), (Suit)suitSwap[(int)plr0.GetSuit() - 1][(int)plr1.GetSuit() - 1][(int)vln1.GetSuit() - 1]);
                     int y = 0;
                     for (; y < COMBINATION; ++y) {
-                        if(hand_arr[y][0].Equals(vln0) && hand_arr[y][1].Equals(vln1)) {    //参照先y
+                        if ((hand_arr[y][0].Equals(vln0) && hand_arr[y][1].Equals(vln1)) || (hand_arr[y][0].Equals(vln1) && hand_arr[y][1].Equals(vln0))) {    //参照先y
+                            full_grid[i][j] = full_grid[x][y];
                             break;
                         }
                     }
-                    full_grid[i][j] = full_grid[x][y];
-                    Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
-                         + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", overwritten by "
-                         + hand_arr[x][0].ToAbbreviateString() + hand_arr[x][1].ToAbbreviateString() + "-"
-                         + hand_arr[y][0].ToAbbreviateString() + hand_arr[y][1].ToAbbreviateString() + " (" + full_grid[i][j] + ")");
+                    if (y == COMBINATION) {
+                        Debug.WriteLine("Missing hand: " + vln0.ToAbbreviateString() + vln1.ToAbbreviateString());
+                    } else {
+                        Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
+                             + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", overwritten by "
+                             + hand_arr[x][0].ToAbbreviateString() + hand_arr[x][1].ToAbbreviateString() + "-"
+                             + hand_arr[y][0].ToAbbreviateString() + hand_arr[y][1].ToAbbreviateString() + " (" + full_grid[i][j] + ")");
+                    }
                 }
-            }
-
+                Debug.WriteLine(i + " complete");
+            });
+            /*
             for (int i = 0; i < COMBINATION; ++i) {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
@@ -305,9 +317,9 @@ namespace pokercsharp.mainsource.appendix {
 
             for (int i = 0; i < COMBINATION; ++i) {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
-                    "{ " + string.Join(", ", full_grid[i]) + " }," + Environment.NewLine);
+                    string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
-
+            */
         }
 
         public int Evaluate(params int[] cards_int) {
