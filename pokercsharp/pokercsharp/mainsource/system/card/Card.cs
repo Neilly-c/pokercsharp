@@ -21,7 +21,7 @@ namespace mainsource.system.card {
         }
 
         public override string ToString() {
-            return this.value.ToString() + " of " + this.suit.ToString() + ": " + this.GetNumber();
+            return this.value.ToString() + " of " + this.suit.ToString() + ": " + this.GetHashCode();
         }
 
         public string ToAbbreviateString(){

@@ -202,7 +202,7 @@ namespace pokercsharp.mainsource.appendix {
                     "{ " + string.Join(", ", full_grid[i]) + " }," + Environment.NewLine);
             }
 
-            FillSymmetry();
+            //FillSymmetry();
 
         }
 
@@ -304,7 +304,7 @@ namespace pokercsharp.mainsource.appendix {
                 }
                 Debug.WriteLine(i + " complete");
             });
-            /*
+            
             for (int i = 0; i < COMBINATION; ++i) {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
@@ -319,7 +319,7 @@ namespace pokercsharp.mainsource.appendix {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
                     string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
-            */
+            
         }
 
         public int Evaluate(params int[] cards_int) {

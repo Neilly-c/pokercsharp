@@ -29,7 +29,7 @@ namespace mainsource.system.evaluator {
             }
             for (int i = 0; i < HOLDEM_HAND_CARDS; ++i) {
                 for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
-                    if (cards[i].GetNumber() == cards[j].GetNumber()) {
+                    if (cards[i].GetHashCode() == cards[j].GetHashCode()) {
                         throw new EvaluatorException("Array cards have two or more same cards");
                     }
                 }
