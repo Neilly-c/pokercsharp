@@ -25,7 +25,7 @@ namespace mainsource.system.evaluator {
             if (IsRoyal(cards)) {
                 return new FinalHand(HandName.ROYAL_FLUSH, new OptionValue(CardValue.ACE));
             } else if (IsStraightFlush(cards)) {
-                return new FinalHand(HandName.STRAIGHT_FLUSH, new OptionValue(cards[0].GetValue()));
+                return new FinalHand(HandName.STRAIGHT_FLUSH, OptionStraight(cards));
             } else if (IsQuads(cards)) {
                 return new FinalHand(HandName.QUADS, OptionQuads(cards));
             } else if (IsFullHouse(cards)) {
