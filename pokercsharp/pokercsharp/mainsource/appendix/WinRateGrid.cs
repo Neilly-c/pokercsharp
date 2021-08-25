@@ -133,7 +133,7 @@ namespace pokercsharp.mainsource.appendix {
                                 s_i1 = hand_arr[i][1].GetSuit(),
                                 s_j0 = hand_arr[j][0].GetSuit(),
                                 s_j1 = hand_arr[j][1].GetSuit();
-                            for (int x = i; x < COMBINATION; ++x) {       //同じ結果になるところを埋める
+                            for (int x = 0; x < COMBINATION; ++x) {       //同じ結果になるところを埋める
                                 CardValue
                                     cv_x0 = hand_arr[x][0].GetValue(),
                                     cv_x1 = hand_arr[x][1].GetValue();
@@ -143,7 +143,7 @@ namespace pokercsharp.mainsource.appendix {
                                 if(!((cv_i0.Equals(cv_x0) && cv_i1.Equals(cv_x1)) || (cv_i0.Equals(cv_x1) && cv_i1.Equals(cv_x0)))){
                                     continue;       //数字が違うやつはパス
                                 }
-                                for (int y = x + 1; y < COMBINATION; ++y) {      // MAX 1326 * 1325 / 2 = 878475 loops.
+                                for (int y = 0; y < COMBINATION; ++y) {
                                     if (full_grid[x][y] != 0) {     //もう埋まってるところはパス
                                         continue;
                                     }
@@ -194,6 +194,9 @@ namespace pokercsharp.mainsource.appendix {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
                     hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ", ");
             }
+
+
+            File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt", Environment.NewLine);
 
             for (int i = 0; i < COMBINATION; ++i) {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
