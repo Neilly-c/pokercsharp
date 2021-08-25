@@ -62,8 +62,8 @@ namespace pokercsharp.mainsource.appendix {
 
             Debug.WriteLine("size of intList_needs_compute = " + intList_for_compute.Count() + " (169)");
 
-            //intList_for_compute.Clear();
-            //intList_for_compute.Add(585);
+            intList_for_compute.Clear();
+            intList_for_compute.Add(585);
 
             int loop = 0;
 
@@ -193,15 +193,11 @@ namespace pokercsharp.mainsource.appendix {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
                     hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ", ");
-                if (i % 50 == 49) {
-                    Debug.WriteLine("");
-                    File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt", Environment.NewLine);
-                }
             }
 
             for (int i = 0; i < COMBINATION; ++i) {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
-                    "{ " + string.Join(", ", full_grid[i]) + " }," + Environment.NewLine);
+                    string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
 
         }
