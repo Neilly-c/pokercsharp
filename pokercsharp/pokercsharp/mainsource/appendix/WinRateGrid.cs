@@ -62,8 +62,10 @@ namespace pokercsharp.mainsource.appendix {
 
             Debug.WriteLine("size of intList_needs_compute = " + intList_for_compute.Count() + " (169)");
 
-            intList_for_compute.Clear();
-            intList_for_compute.Add(585);
+            intList_for_compute.Clear();        //for debug
+            for(int i = 0; i < 10; ++i) {
+                intList_for_compute.Add(i);
+            }
 
             int loop = 0;
 
@@ -153,6 +155,11 @@ namespace pokercsharp.mainsource.appendix {
                                     Suit
                                         s_y0 = hand_arr[y][0].GetSuit(),
                                         s_y1 = hand_arr[y][1].GetSuit();
+                                    if (!IsAllDifferent((int)cv_x0, (int)cv_x1, (int)cv_y0, (int)cv_y1)) {  //カード被ってるところはパス
+                                        full_grid[x][y] = -1;
+                                        full_grid[x][y] = -1;
+                                        continue;
+                                    }
                                     if (cv_j0.Equals(cv_y0) && cv_j1.Equals(cv_y1)) {
                                         if (s_i0.Equals(s_i1) == s_x0.Equals(s_x1)
                                           && s_i0.Equals(s_j0) == s_x0.Equals(s_y0)
