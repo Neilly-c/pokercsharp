@@ -61,16 +61,16 @@ namespace pokercsharp.mainsource.appendix {
             }
 
             Debug.WriteLine("size of intList_needs_compute = " + intList_for_compute.Count() + " (169)");
-            
+            /*
             intList_for_compute.Clear();        //for debug
             for(int i = 0; i < 5; ++i) {
                 intList_for_compute.Add(i);
-            }
+            }*/
 
             int loop = 0;
 
             ParallelOptions option = new ParallelOptions();
-            option.MaxDegreeOfParallelism = 10;
+            option.MaxDegreeOfParallelism = 6;
 
             foreach (int i in intList_for_compute) {
                 Parallel.For(0, COMBINATION, option, j => {      // 1326 * 1325 / 2 = 878475 -> 169 * 1326 = 224094 loops.
