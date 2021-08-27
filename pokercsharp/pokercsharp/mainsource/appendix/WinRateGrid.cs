@@ -211,6 +211,26 @@ namespace pokercsharp.mainsource.appendix {
             }
 
         }
+        
+        public void ReadCSVofGrid(){
+            
+            StreamReader sr = new StreamReader(@"D:\Csharp\pokercsharp\7.csv");
+            sr.ReadLine();
+            int row = 0;
+            while (!sr.EndOfStream) {
+                string line = sr.ReadLine();
+                fullgrid[row] = Array.ConvertAll(line.Split(','), int.Parse);
+                ++row;
+            }
+            
+            ParallelOptions option = new ParallelOptions();
+            option.MaxDegreeOfParallelism = 6;
+
+            foreach (int i in intList_for_compute) {
+                Parallel.For(0, COMBINATION, option, j => {
+                }
+            });
+        }
 
         public int Evaluate(params int[] cards_int) {
             int[] cards_picked_int = new int[5];
