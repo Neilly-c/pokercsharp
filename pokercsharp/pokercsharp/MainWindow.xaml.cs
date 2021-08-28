@@ -36,7 +36,8 @@ namespace pokercsharp {
             FinalHandsDict finalHandsDict = new FinalHandsDict();
             finalHandsDict.Init();
             WinRateGrid winRateGrid = new WinRateGrid();
-            winRateGrid.Init();
+            //winRateGrid.Init();
+            winRateGrid.ReadCSVofGrid();
         }
 
         private void InitView() {

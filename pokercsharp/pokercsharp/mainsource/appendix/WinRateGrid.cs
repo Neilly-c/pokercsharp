@@ -142,7 +142,7 @@ namespace pokercsharp.mainsource.appendix {
                                 Suit
                                     s_x0 = hand_arr[x][0].GetSuit(),
                                     s_x1 = hand_arr[x][1].GetSuit();
-                                if(!((cv_i0.Equals(cv_x0) && cv_i1.Equals(cv_x1)) || (cv_i0.Equals(cv_x1) && cv_i1.Equals(cv_x0)))){
+                                if (!((cv_i0.Equals(cv_x0) && cv_i1.Equals(cv_x1)) || (cv_i0.Equals(cv_x1) && cv_i1.Equals(cv_x0)))) {
                                     continue;       //数字が違うやつはパス
                                 }
                                 for (int y = 0; y < COMBINATION; ++y) {
@@ -174,7 +174,7 @@ namespace pokercsharp.mainsource.appendix {
                                                 " same as the former's, " + full_grid[x][y] + "-" + full_grid[y][x]);
                                             ++loop;
                                         }
-                                    }else if (cv_j0.Equals(cv_y1) && cv_j1.Equals(cv_y0)) {
+                                    } else if (cv_j0.Equals(cv_y1) && cv_j1.Equals(cv_y0)) {
                                         if (s_i0.Equals(s_i1) == s_x0.Equals(s_x1)
                                           && s_i0.Equals(s_j0) == s_x0.Equals(s_y1)
                                           && s_i0.Equals(s_j1) == s_x0.Equals(s_y0)
@@ -211,25 +211,109 @@ namespace pokercsharp.mainsource.appendix {
             }
 
         }
-        
-        public void ReadCSVofGrid(){
-            
-            StreamReader sr = new StreamReader(@"D:\Csharp\pokercsharp\7.csv");
-            sr.ReadLine();
-            int row = 0;
-            while (!sr.EndOfStream) {
-                string line = sr.ReadLine();
-                fullgrid[row] = Array.ConvertAll(line.Split(','), int.Parse);
-                ++row;
+
+        public void ReadCSVofGrid() {
+
+            using (StreamReader sr = new StreamReader(@"D:\Csharp\pokercsharp\winRateGrid.txt")) {
+                sr.ReadLine();
+                int row = 0;
+                while (!sr.EndOfStream) {
+                    string line = sr.ReadLine();
+                    line = line.Substring(0, line.Length - 1);      //末尾の,を外さないと空文字列をintに変換できないため応急処置
+                    full_grid[row] = Array.ConvertAll(line.Split(','), int.Parse);
+                    ++row;
+                }
             }
-            
+
+            card_arr = fca.GetCardArr();             //ただの52枚の配列
+            for (int i = 0; i < COMBINATION; ++i) {
+                hand_arr[i] = new Card[2];
+                hand_arr_int[i] = new int[2];
+            }
+
+            int iter = 0;
+            for (int i = 0; i < FULL_DECK_LEN; ++i) {
+                for (int j = i + 1; j < FULL_DECK_LEN; ++j) {
+                    hand_arr[iter][0] = card_arr[i];
+                    hand_arr[iter][1] = card_arr[j];
+                    hand_arr_int[iter][0] = i;
+                    hand_arr_int[iter][1] = j;
+                    ++iter;
+                }
+            }
+
             ParallelOptions option = new ParallelOptions();
             option.MaxDegreeOfParallelism = 6;
 
-            foreach (int i in intList_for_compute) {
+            for (int i = 0; i < COMBINATION; ++i) {
                 Parallel.For(0, COMBINATION, option, j => {
-                }
-            });
+                    if (full_grid[i][j] == 0) {
+
+
+                        if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1])) {   //持ってるカードが被ってるハンドは除外
+                            full_grid[i][j] = -1;
+                            full_grid[j][i] = -1;
+                        } else {
+
+                            int winCount = 0, evenCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
+                            for (int a = 4; a < FULL_DECK_LEN; ++a) {
+                                if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], a)) {
+                                    continue;
+                                }
+                                for (int b = 3; b < a; ++b) {
+                                    if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], b)) {
+                                        continue;
+                                    }
+                                    for (int c = 2; c < b; ++c) {
+                                        if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], c)) {
+                                            continue;
+                                        }
+                                        for (int d = 1; d < c; ++d) {
+                                            if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], d)) {
+                                                continue;
+                                            }
+                                            for (int e = 0; e < d; ++e) {
+                                                if (IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], e)) {
+                                                    int f_p1 = Evaluate(hand_arr_int[i][0], hand_arr_int[i][1], a, b, c, d, e),  //ハンドとボードの情報を渡して完成ハンドを返してもらう
+                                                        f_p2 = Evaluate(hand_arr_int[j][0], hand_arr_int[j][1], a, b, c, d, e);
+                                                    if (f_p1 > f_p2) {  //比較大なら勝ち
+                                                        ++winCount;
+                                                    } else if (f_p1 == f_p2) {   //イコールなら引き分け
+                                                        ++evenCount;
+                                                    }
+                                                    ++count;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            full_grid[i][j] = winCount * 2 + evenCount;         //集計して勝った回数を書いておく　実際に使う時は分母で割って確率を出せばよい(double型より軽く正確)
+                            full_grid[j][i] = count * 2 - full_grid[i][j];      //逆のマッチアップは勝率も逆にしておく
+
+                            Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
+                                + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " +
+                                full_grid[i][j] + "-" + full_grid[j][i] + " (" + winCount + " wins, " + evenCount + " ties in count of " + count + ")");
+
+                        }
+                    }
+                });
+            }
+
+            for (int i = 0; i < COMBINATION; ++i) {
+                Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
+                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt",
+                    hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ", ");
+            }
+
+
+            File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt", Environment.NewLine);
+
+            for (int i = 0; i < COMBINATION; ++i) {
+                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt",
+                    string.Join(", ", full_grid[i]) + Environment.NewLine);
+            }
         }
 
         public int Evaluate(params int[] cards_int) {
