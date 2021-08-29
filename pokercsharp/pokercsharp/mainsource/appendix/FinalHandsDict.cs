@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace pokercsharp.mainsource.appendix {
     class FinalHandsDict {
-        const int FULL_DECK_LEN = 52;
-        const int _52C5 = 2598960;
         public static Dictionary<int, FinalHand> finalDict = new Dictionary<int, FinalHand>();
         public static int[][][][][] finalDictArr = new int[52][][][][];
         static Card[] card_arr;
@@ -33,7 +31,7 @@ namespace pokercsharp.mainsource.appendix {
             ParallelOptions option = new ParallelOptions();
             option.MaxDegreeOfParallelism = 6;
 
-            for (int a = 4; a < FULL_DECK_LEN; ++a) {
+            for (int a = 4; a < Constants.FULL_DECK_LEN; ++a) {
                 finalDictArr[a] = new int[a][][][];
                 for (int b = 3; b < a; ++b) {
                     finalDictArr[a][b] = new int[b][][];
@@ -52,8 +50,8 @@ namespace pokercsharp.mainsource.appendix {
                                 }
                                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid_beta.txt",
                                     "," + fh.ToString() + ", " + fh.GetHashCode() +  Environment.NewLine);*/
-                                if ((loop / (_52C5 / 100)) - ((loop - 1) / (_52C5 / 100)) != 0) {
-                                    Debug.WriteLine(loop / (_52C5 / 100) + "% complete");
+                                if ((loop / (Constants._52C5 / 100)) - ((loop - 1) / (Constants._52C5 / 100)) != 0) {
+                                    Debug.WriteLine(loop / (Constants._52C5 / 100) + "% complete");
                                 }
                             });
                         }

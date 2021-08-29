@@ -53,13 +53,13 @@ namespace mainsource.system.parser {
                     continue;
                 }
 
-                if (currentValue == 0){
+                if (currentValue == '0'){
                     currentValue = currentChar;
-                }else if (currentSuit == 0){
+                }else if (currentSuit == '0'){
                     currentSuit = currentChar;
                 }
 
-                if (currentValue != 0 && currentSuit != 0){
+                if (currentValue != '0' && currentSuit != '0'){
                     Card parsedCard = this.ParseCard(currentValue, currentSuit);
                     parsedCardList.Add(parsedCard);
 

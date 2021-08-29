@@ -1,19 +1,18 @@
 using mainsource.system.card;
 using mainsource.system.handvalue;
+using pokercsharp.mainsource;
 using System;
 
 namespace mainsource.system.evaluator {
 
     public class HandEvaluator {
 
-        const int HAND_CARDS = 5;
-
         public FinalHand Evaluate(Card[] cards) {
-            if (cards.Length != HAND_CARDS) {
+            if (cards.Length != Constants.HAND_CARDS) {
                 throw new EvaluatorException("evaluating hand length is illegal");
             }
-            for (int i = 0; i < HAND_CARDS; ++i) {
-                for (int j = i + 1; j < HAND_CARDS; ++j) {
+            for (int i = 0; i < Constants.HAND_CARDS; ++i) {
+                for (int j = i + 1; j < Constants.HAND_CARDS; ++j) {
                     if (cards[i].GetHashCode() == cards[j].GetHashCode()) {
                         throw new EvaluatorException("Array cards have two or more same cards");
                     }
@@ -93,7 +92,7 @@ namespace mainsource.system.evaluator {
 
         private bool IsFlush(Card[] cards) {
             Suit suit0 = cards[0].GetSuit();
-            for (int i = 1; i < HAND_CARDS; ++i) {
+            for (int i = 1; i < Constants.HAND_CARDS; ++i) {
                 if (!cards[i].GetSuit().Equals(suit0)) {
                     return false;
                 }
@@ -119,7 +118,7 @@ namespace mainsource.system.evaluator {
                     value = 6;  //A5432
                 }
             }
-            for (int i = 1; i < HAND_CARDS; ++i) {
+            for (int i = 1; i < Constants.HAND_CARDS; ++i) {
                 if (value - cards[i].GetValue().GetValue() != 1) {
                     return false;
                 }

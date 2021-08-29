@@ -6,9 +6,6 @@
         xmlns:local="clr-namespace:pokercsharp"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
-    <ScrollViewer x:Name="baseScroll" Width="760" Height="760" HorizontalAlignment="Left" Margin="20,0,0,20">
-        <Grid>
-        </Grid>
-    </ScrollViewer>
+    <Grid x:Name="handGrid" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
 </Window>

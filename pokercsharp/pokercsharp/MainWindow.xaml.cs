@@ -1,4 +1,6 @@
-﻿using pokercsharp.mainsource.appendix;
+﻿using mainsource.cfrplus;
+using pokercsharp.mainsource;
+using pokercsharp.mainsource.appendix;
 using pokercsharp.mainsource.cfrplus;
 using System;
 using System.Collections.Generic;
@@ -23,94 +25,93 @@ namespace pokercsharp {
     /// </summary>
     public partial class MainWindow : Window {
 
-        const int FULL_GRID_SIZE = 1327;
-        const int _48C5 = 1712304;
-        string[] hands;
-        Grid fullGrid;
+        AggregatedWinRateGrid agwr = new AggregatedWinRateGrid();
+        string[] prefix = new string[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
 
         public MainWindow() {
             InitializeComponent();
             Debug.WriteLine("Hello!");
-            //InitView();
-
+            /*
             FinalHandsDict finalHandsDict = new FinalHandsDict();
             finalHandsDict.Init();
             WinRateGrid winRateGrid = new WinRateGrid();
-            //winRateGrid.Init();
+            winRateGrid.Init();
             winRateGrid.ReadCSVofGrid();
+            */
+            agwr.Init();
+            InitView();
+            CFRPlus cfr = new CFRPlus();
+            cfr.Train(100000);
         }
 
         private void InitView() {
-            ScrollViewer scrollViewer = this.FindName("baseScroll") as ScrollViewer;
-            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            fullGrid = new Grid();
-            fullGrid.Width = FULL_GRID_SIZE * 20;
-            fullGrid.Height = FULL_GRID_SIZE * 20;
-            fullGrid.HorizontalAlignment = HorizontalAlignment.Left;
-            fullGrid.VerticalAlignment = VerticalAlignment.Top;
-            fullGrid.ShowGridLines = true;
-            for (int i = 0; i < FULL_GRID_SIZE; ++i) {
+            Grid handGrid = this.FindName("handGrid") as Grid;
+            handGrid.ShowGridLines = true;
+            for (int i = 0; i < Constants.CARDVALUE_LEN + 1; ++i) {
                 ColumnDefinition colDef = new ColumnDefinition();
                 RowDefinition rowDef = new RowDefinition();
-                fullGrid.ColumnDefinitions.Add(colDef);
-                fullGrid.RowDefinitions.Add(rowDef);
+                handGrid.ColumnDefinitions.Add(colDef);
+                handGrid.RowDefinitions.Add(rowDef);
             }
 
-            ReadFile();
-
-            for (int i = 1; i < FULL_GRID_SIZE; ++i) {
-                TextBlock txt1 = new TextBlock(), txt2 = new TextBlock();
-                txt1.Text = hands[i - 1];
-                txt2.Text = hands[i - 1];
-                txt1.FontSize = 8;
-                txt2.FontSize = 8;
+            for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
+                TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
                 Grid.SetColumn(txt1, i);
                 Grid.SetColumn(txt2, 0);
                 Grid.SetRow(txt1, 0);
                 Grid.SetRow(txt2, i);
-                fullGrid.Children.Add(txt1);
-                fullGrid.Children.Add(txt2);
+                handGrid.Children.Add(txt1);
+                handGrid.Children.Add(txt2);
             }
 
-            scrollViewer.Content = fullGrid;
+            int[][][][] digest_grid = agwr.Get_digest_grid();
+            int[][][][] digest_count = agwr.Get_digest_count();
+
+            for (int a = 0; a < Constants.CARDVALUE_LEN; ++a) {
+                for (int b = 0; b < Constants.CARDVALUE_LEN; ++b) {
+                    long winCount = 0;
+                    long count = 0;
+                    for (int c = 0; c < Constants.CARDVALUE_LEN; ++c) {
+                        for (int d = 0; d < Constants.CARDVALUE_LEN; ++d) {
+                            winCount += digest_grid[a][b][c][d];
+                            count += digest_count[a][b][c][d];
+                        }
+                    }
+                    TextBlock block = TextBlockWithColorChart((winCount * 1000 / (count * Constants._48C5 * 2)).ToString(),
+                        count.ToString());
+                    Grid.SetRow(block, a + 1);
+                    Grid.SetColumn(block, b + 1);
+                    handGrid.Children.Add(block);
+                }
+            }
+
             Debug.WriteLine("Hello!");
 
         }
 
-        private void ReadFile() {
-            IEnumerable<string> ies = File.ReadLines("D:\\Csharp\\pokercsharp\\winRateGrid.txt");
-            foreach (string s in ies) {
-                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridex.txt", s.Trim('{').Trim('}'));
-                File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridex.txt", Environment.NewLine);
+        private TextBlock TextBlockInGrid(string value) {
+            TextBlock block = new TextBlock();
+            block.Text = value;
+            block.FontSize = 20;
+            block.VerticalAlignment = VerticalAlignment.Center;
+            block.HorizontalAlignment = HorizontalAlignment.Center;
+            return block;
+        }
+
+        private TextBlock TextBlockWithColorChart(string value, params string[] str) {
+            TextBlock block = new TextBlock();
+            byte b = (byte)(Int32.Parse(value) / 5);
+            string text = "";
+            for (int i = 0; i < str.Length; ++i) {
+                text = text + "\n" + str[i];
             }
-            string handstr = ies.First();
-            hands = handstr.Split(',');
-            int rowIter = 0;
-            /*
-            foreach(string s in ies) {
-                if (s.Contains('{')) {
-                    ++rowIter;
-                    string[] line = s.Trim('{').Trim('}').Split(',');
-                    for(int i = 1; i < FULL_GRID_SIZE - 1; ++i) {
-                        Rectangle rect = new Rectangle();
-                        if(Int32.Parse(line[i - 1]) == -1) {
-                            rect.Fill = Brushes.Gray;
-                        } else if (Int32.Parse(line[i - 1]) == 0) {
-                            rect.Fill = Brushes.Black;
-                        } else if((float)Int32.Parse(line[i - 1])/(float)_48C5 == 0.5f) {
-                            rect.Fill = Brushes.AliceBlue;
-                        } else if ((float)Int32.Parse(line[i - 1]) / (float)_48C5 > 0.5f) {
-                            rect.Fill = Brushes.Blue;
-                        } else {
-                            rect.Fill = Brushes.Red;
-                        }
-                        Grid.SetColumn(rect, i);
-                        Grid.SetRow(rect, rowIter);
-                        fullGrid.Children.Add(rect);
-                    }
-                }
-            }*/
+            block.Text = string.Format("{0}.{1}%", value.Substring(0,2), value.Substring(2,1)) + text;
+            block.FontSize = 16;
+            block.VerticalAlignment = VerticalAlignment.Stretch;
+            block.HorizontalAlignment = HorizontalAlignment.Stretch;
+            block.TextAlignment = TextAlignment.Center;
+            block.Background = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(0xFF - b), (byte)(0xFF - b / 2), b));
+            return block;
         }
     }
 }

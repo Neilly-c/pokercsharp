@@ -12,32 +12,25 @@ using System.Threading.Tasks;
 
 namespace pokercsharp.mainsource.appendix {
     class WinRateGrid {
-        const int COMBINATION = 1326;
-        const int ABB_COM = 169;
-        const int FULL_DECK_LEN = 52;
-        const int HOLDEM_HAND_CARDS = 7;
-        const int COM_2 = 878485;
-        const int _48C5 = 1712304;
 
-        int[][] full_grid = new int[COMBINATION][];     //1326*1326
+        int[][] full_grid = new int[Constants.COMBINATION][];     //1326*1326
         FullCardArr fca = new FullCardArr();
         Card[] card_arr;
-        Card[][] hand_arr = new Card[COMBINATION][];    //1326通りのハンドの配列
-        int[][] hand_arr_int = new int[COMBINATION][];
+        Card[][] hand_arr = new Card[Constants.COMBINATION][];    //1326通りのハンドの配列
+        int[][] hand_arr_int = new int[Constants.COMBINATION][];
         List<int> intList_for_compute = new List<int>(); //ハンドの対称性を考慮して計算が必要なハンドの番号
-        int[][][] valSwap = new int[2][][];        //[0]:suited, [1]:offsuit, pair
 
         public void Init() {
             card_arr = fca.GetCardArr();             //ただの52枚の配列
-            for (int i = 0; i < COMBINATION; ++i) {
-                full_grid[i] = new int[COMBINATION];
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
+                full_grid[i] = new int[Constants.COMBINATION];
                 hand_arr[i] = new Card[2];                  //配列初期化処理(javaと違って2次元配列はこうやって定義しないといけないらしい)
                 hand_arr_int[i] = new int[2];
             }
 
             int iter = 0;
-            for (int i = 0; i < FULL_DECK_LEN; ++i) {
-                for (int j = i + 1; j < FULL_DECK_LEN; ++j) {       //ハンド配列生成
+            for (int i = 0; i < Constants.FULL_DECK_LEN; ++i) {
+                for (int j = i + 1; j < Constants.FULL_DECK_LEN; ++j) {       //ハンド配列生成
                     hand_arr[iter][0] = card_arr[i];
                     hand_arr[iter][1] = card_arr[j];
                     hand_arr_int[iter][0] = i;
@@ -73,7 +66,7 @@ namespace pokercsharp.mainsource.appendix {
             option.MaxDegreeOfParallelism = 6;
 
             foreach (int i in intList_for_compute) {
-                Parallel.For(0, COMBINATION, option, j => {      // 1326 * 1325 / 2 = 878475 -> 169 * 1326 = 224094 loops.
+                Parallel.For(0, Constants.COMBINATION, option, j => {      // 1326 * 1325 / 2 = 878475 -> 169 * 1326 = 224094 loops.
                     ++loop;
 
                     if (full_grid[i][j] == 0) {
@@ -84,7 +77,7 @@ namespace pokercsharp.mainsource.appendix {
                         } else {
 
                             int winCount = 0, evenCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
-                            for (int a = 4; a < FULL_DECK_LEN; ++a) {
+                            for (int a = 4; a < Constants.FULL_DECK_LEN; ++a) {
                                 if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], a)) {
                                     continue;
                                 }
@@ -135,7 +128,7 @@ namespace pokercsharp.mainsource.appendix {
                                 s_i1 = hand_arr[i][1].GetSuit(),
                                 s_j0 = hand_arr[j][0].GetSuit(),
                                 s_j1 = hand_arr[j][1].GetSuit();
-                            for (int x = 0; x < COMBINATION; ++x) {       //同じ結果になるところを埋める
+                            for (int x = 0; x < Constants.COMBINATION; ++x) {       //同じ結果になるところを埋める
                                 CardValue
                                     cv_x0 = hand_arr[x][0].GetValue(),
                                     cv_x1 = hand_arr[x][1].GetValue();
@@ -145,7 +138,7 @@ namespace pokercsharp.mainsource.appendix {
                                 if (!((cv_i0.Equals(cv_x0) && cv_i1.Equals(cv_x1)) || (cv_i0.Equals(cv_x1) && cv_i1.Equals(cv_x0)))) {
                                     continue;       //数字が違うやつはパス
                                 }
-                                for (int y = 0; y < COMBINATION; ++y) {
+                                for (int y = 0; y < Constants.COMBINATION; ++y) {
                                     if (full_grid[x][y] != 0) {     //もう埋まってるところはパス
                                         continue;
                                     }
@@ -196,7 +189,7 @@ namespace pokercsharp.mainsource.appendix {
                 });
             }
 
-            for (int i = 0; i < COMBINATION; ++i) {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
                     hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ", ");
@@ -205,14 +198,14 @@ namespace pokercsharp.mainsource.appendix {
 
             File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt", Environment.NewLine);
 
-            for (int i = 0; i < COMBINATION; ++i) {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
                     string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
 
         }
 
-        public void ReadCSVofGrid() {
+        public void ReadCSVofGrid() {       //抜けがあるのを埋めるために全走査で埋める　それほどの数にはならないはず
 
             using (StreamReader sr = new StreamReader(@"D:\Csharp\pokercsharp\winRateGrid.txt")) {
                 sr.ReadLine();
@@ -226,14 +219,14 @@ namespace pokercsharp.mainsource.appendix {
             }
 
             card_arr = fca.GetCardArr();             //ただの52枚の配列
-            for (int i = 0; i < COMBINATION; ++i) {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
                 hand_arr[i] = new Card[2];
                 hand_arr_int[i] = new int[2];
             }
 
             int iter = 0;
-            for (int i = 0; i < FULL_DECK_LEN; ++i) {
-                for (int j = i + 1; j < FULL_DECK_LEN; ++j) {
+            for (int i = 0; i < Constants.FULL_DECK_LEN; ++i) {
+                for (int j = i + 1; j < Constants.FULL_DECK_LEN; ++j) {
                     hand_arr[iter][0] = card_arr[i];
                     hand_arr[iter][1] = card_arr[j];
                     hand_arr_int[iter][0] = i;
@@ -245,8 +238,8 @@ namespace pokercsharp.mainsource.appendix {
             ParallelOptions option = new ParallelOptions();
             option.MaxDegreeOfParallelism = 6;
 
-            for (int i = 0; i < COMBINATION; ++i) {
-                Parallel.For(0, COMBINATION, option, j => {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
+                Parallel.For(0, Constants.COMBINATION, option, j => {
                     if (full_grid[i][j] == 0) {
 
 
@@ -256,7 +249,7 @@ namespace pokercsharp.mainsource.appendix {
                         } else {
 
                             int winCount = 0, evenCount = 0, count = 0;        //winCount 勝ったハンドは+2，引き分けたハンドは+1する　countは常時+2する
-                            for (int a = 4; a < FULL_DECK_LEN; ++a) {
+                            for (int a = 4; a < Constants.FULL_DECK_LEN; ++a) {
                                 if (!IsAllDifferent(hand_arr_int[i][0], hand_arr_int[i][1], hand_arr_int[j][0], hand_arr_int[j][1], a)) {
                                     continue;
                                 }
@@ -301,7 +294,7 @@ namespace pokercsharp.mainsource.appendix {
                 });
             }
 
-            for (int i = 0; i < COMBINATION; ++i) {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
                 Debug.Write(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ",");
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt",
                     hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + ", ");
@@ -310,7 +303,7 @@ namespace pokercsharp.mainsource.appendix {
 
             File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt", Environment.NewLine);
 
-            for (int i = 0; i < COMBINATION; ++i) {
+            for (int i = 0; i < Constants.COMBINATION; ++i) {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGridExt.txt",
                     string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
@@ -319,10 +312,10 @@ namespace pokercsharp.mainsource.appendix {
         public int Evaluate(params int[] cards_int) {
             int[] cards_picked_int = new int[5];
             int result = 0;
-            for (int i = 0; i < HOLDEM_HAND_CARDS - 1; ++i) {
-                for (int j = i + 1; j < HOLDEM_HAND_CARDS; ++j) {
+            for (int i = 0; i < Constants.HOLDEM_HAND_CARDS - 1; ++i) {
+                for (int j = i + 1; j < Constants.HOLDEM_HAND_CARDS; ++j) {
                     int count = 0;
-                    for (int k = 0; k < HOLDEM_HAND_CARDS; ++k) {
+                    for (int k = 0; k < Constants.HOLDEM_HAND_CARDS; ++k) {
                         if (k != i && k != j) {
                             cards_picked_int[count] = cards_int[k];
                             ++count;
