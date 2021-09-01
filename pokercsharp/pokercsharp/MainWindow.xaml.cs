@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace pokercsharp {
     /// <summary>
@@ -26,7 +27,9 @@ namespace pokercsharp {
     public partial class MainWindow : Window {
 
         AggregatedWinRateGrid agwr = new AggregatedWinRateGrid();
+            CFRPlus cfr = new CFRPlus();
         string[] prefix = new string[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
+        Grid wrGrid, sbGrid, bbGrid;
 
         public MainWindow() {
             InitializeComponent();
@@ -40,28 +43,53 @@ namespace pokercsharp {
             */
             agwr.Init();
             InitView();
-            CFRPlus cfr = new CFRPlus();
-            cfr.Train(100000);
+        }
+
+        private void runButton_Click(object sender, RoutedEventArgs e) {
+            Debug.WriteLine("Activate CFR...");
+            for (int i = 0; i < Int32.Parse(iterText.Text); ++i) {
+                Dictionary<string, Node> nodeMap = cfr.Run(500000, Int32.Parse(stackText.Text));
+                ApplyCFRToView(nodeMap);
+                DoEvents();
+            }
+        }
+
+        private void DoEvents() {
+            DispatcherFrame frame = new DispatcherFrame();
+            var callback = new DispatcherOperationCallback(ExitFrames);
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
+            Dispatcher.PushFrame(frame);
+        }
+
+        private object ExitFrames(object obj) {
+            ((DispatcherFrame)obj).Continue = false;
+            return null;
         }
 
         private void InitView() {
-            Grid handGrid = this.FindName("handGrid") as Grid;
-            handGrid.ShowGridLines = true;
-            for (int i = 0; i < Constants.CARDVALUE_LEN + 1; ++i) {
-                ColumnDefinition colDef = new ColumnDefinition();
-                RowDefinition rowDef = new RowDefinition();
-                handGrid.ColumnDefinitions.Add(colDef);
-                handGrid.RowDefinitions.Add(rowDef);
-            }
+            wrGrid = this.FindName("handGrid") as Grid;
+            sbGrid = this.FindName("handGridSB") as Grid;
+            bbGrid = this.FindName("handGridBB") as Grid;
 
-            for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
-                TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
-                Grid.SetColumn(txt1, i);
-                Grid.SetColumn(txt2, 0);
-                Grid.SetRow(txt1, 0);
-                Grid.SetRow(txt2, i);
-                handGrid.Children.Add(txt1);
-                handGrid.Children.Add(txt2);
+            foreach (Grid grid in new Grid[] { wrGrid, sbGrid, bbGrid }) {
+
+                grid.ShowGridLines = true;
+                for (int i = 0; i < Constants.CARDVALUE_LEN + 1; ++i) {
+                    ColumnDefinition colDef = new ColumnDefinition();
+                    RowDefinition rowDef = new RowDefinition();
+                    grid.ColumnDefinitions.Add(colDef);
+                    grid.RowDefinitions.Add(rowDef);
+                }
+
+                for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
+                    TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
+                    Grid.SetColumn(txt1, i);
+                    Grid.SetColumn(txt2, 0);
+                    Grid.SetRow(txt1, 0);
+                    Grid.SetRow(txt2, i);
+                    grid.Children.Add(txt1);
+                    grid.Children.Add(txt2);
+                }
             }
 
             int[][][][] digest_grid = agwr.Get_digest_grid();
@@ -81,12 +109,59 @@ namespace pokercsharp {
                         count.ToString());
                     Grid.SetRow(block, a + 1);
                     Grid.SetColumn(block, b + 1);
-                    handGrid.Children.Add(block);
+                    wrGrid.Children.Add(block);
                 }
             }
 
-            Debug.WriteLine("Hello!");
+        }
 
+        private void ApplyCFRToView(Dictionary<string, Node> nodeMap) {
+            sbGrid.Children.Clear();
+            bbGrid.Children.Clear();
+
+            foreach (Grid grid in new Grid[] { sbGrid, bbGrid }) {
+
+                for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
+                    TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
+                    Grid.SetColumn(txt1, i);
+                    Grid.SetColumn(txt2, 0);
+                    Grid.SetRow(txt1, 0);
+                    Grid.SetRow(txt2, i);
+                    grid.Children.Add(txt1);
+                    grid.Children.Add(txt2);
+                }
+            }
+
+            double sbPush = 0, bbPush = 0;
+            foreach(string key in nodeMap.Keys) {
+                Boolean isSB = !key[key.Length - 1].Equals('p');
+                Grid gridApplyTo = isSB ? sbGrid : bbGrid;
+                int a = Constants.handKey[key[0]],
+                    b = Constants.handKey[key[1]];
+                int combination;
+                if(a != b) {
+                    if (key[2].Equals('o')) {
+                        int temp = a; a = b; b = temp;
+                        combination = 12;
+                    } else {
+                        combination = 4;
+                    }
+                } else {
+                    combination = 6;
+                }
+                if (isSB) {
+                    sbPush += nodeMap[key].GetAverageStrategy()[1] * combination;
+                } else {
+                    bbPush += nodeMap[key].GetAverageStrategy()[1] * combination;
+                }
+                TextBlock block = TextBlockWithColorChart(((int)(nodeMap[key].GetAverageStrategy()[1] * 1000)).ToString());
+                Grid.SetRow(block, a + 1);
+                Grid.SetColumn(block, b + 1);
+                gridApplyTo.Children.Add(block);
+            }
+            sbPushPercent.Text = FormatPercent((int)(sbPush / Constants.COMBINATION * 1000));
+            bbPushPercent.Text = FormatPercent((int)(bbPush / Constants.COMBINATION * 1000));
+            avgSBprofit.Text = cfr.utilPerIterations.ToString("F3");
         }
 
         private TextBlock TextBlockInGrid(string value) {
@@ -105,13 +180,17 @@ namespace pokercsharp {
             for (int i = 0; i < str.Length; ++i) {
                 text = text + "\n" + str[i];
             }
-            block.Text = string.Format("{0}.{1}%", value.Substring(0,2), value.Substring(2,1)) + text;
+            block.Text = FormatPercent(Int32.Parse(value)) + text;
             block.FontSize = 16;
             block.VerticalAlignment = VerticalAlignment.Stretch;
             block.HorizontalAlignment = HorizontalAlignment.Stretch;
             block.TextAlignment = TextAlignment.Center;
             block.Background = new SolidColorBrush(Color.FromArgb(0xFF, (byte)(0xFF - b), (byte)(0xFF - b / 2), b));
             return block;
+        }
+
+        private string FormatPercent(int value) {
+            return string.Format("{0}.{1}%", value / 10, value % 10);
         }
     }
 }

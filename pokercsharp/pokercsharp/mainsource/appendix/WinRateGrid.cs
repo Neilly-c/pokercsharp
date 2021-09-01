@@ -21,7 +21,7 @@ namespace pokercsharp.mainsource.appendix {
         List<int> intList_for_compute = new List<int>(); //ハンドの対称性を考慮して計算が必要なハンドの番号
 
         public void Init() {
-            card_arr = fca.GetCardArr();             //ただの52枚の配列
+            card_arr = fca.card_arr;             //ただの52枚の配列
             for (int i = 0; i < Constants.COMBINATION; ++i) {
                 full_grid[i] = new int[Constants.COMBINATION];
                 hand_arr[i] = new Card[2];                  //配列初期化処理(javaと違って2次元配列はこうやって定義しないといけないらしい)
@@ -218,7 +218,7 @@ namespace pokercsharp.mainsource.appendix {
                 }
             }
 
-            card_arr = fca.GetCardArr();             //ただの52枚の配列
+            card_arr = fca.card_arr;             //ただの52枚の配列
             for (int i = 0; i < Constants.COMBINATION; ++i) {
                 hand_arr[i] = new Card[2];
                 hand_arr_int[i] = new int[2];

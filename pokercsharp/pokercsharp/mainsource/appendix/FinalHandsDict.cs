@@ -18,7 +18,7 @@ namespace pokercsharp.mainsource.appendix {
         public void Init() {
 
             FullCardArr fca = new FullCardArr();
-            card_arr = fca.GetCardArr();
+            card_arr = fca.card_arr;
 
             /*
 			52_C_5 = 2598960 loops.

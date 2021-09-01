@@ -28,7 +28,7 @@ namespace mainsource.system.card {
 
         public static string GetAbb(this CardValue val) {
             string[] abb = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K" };
-            return abb[(int)val-1];
+            return abb[(int)val - 1];
         }
 
         public static CardValue GetCardValueFromInt(int i) {

@@ -6,16 +6,49 @@
         xmlns:local="clr-namespace:pokercsharp"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
-         
-            <TabControl Height="760" Width="760">
-                <TabItem Header="Default" Name="tab1">
-        <Grid x:Name="handGrid" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                </TabItem>
-                <TabItem Header="SB" Name="tab2">
-        <Grid x:Name="handGridSB" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                </TabItem>
-                <TabItem Header="BB" Name="tab3">
-        <Grid x:Name="handGridBB" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                </TabItem>
-            </TabControl>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="820"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TabControl Height="760" Width="760" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TabItem Header="Default" Name="tab1">
+                <Grid x:Name="handGrid" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top">
+                </Grid>
+            </TabItem>
+            <TabItem Header="SB" Name="tab2">
+                <Grid x:Name="handGridSB" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </TabItem>
+            <TabItem Header="BB" Name="tab3">
+                <Grid x:Name="handGridBB" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </TabItem>
+        </TabControl>
+        <Label Grid.Column="1" Content="Stack(BB) :" Target="{Binding ElementName=stackText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox x:Name="stackText" Grid.Column="2" HorizontalAlignment="Left" TextAlignment="Right" Text="8" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label Grid.Column="1" Content="Iteration :" Target="{Binding ElementName=iterText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="0,40,0,0"/>
+        <TextBox x:Name="iterText" Grid.Column="2" HorizontalAlignment="Left" TextAlignment="Right" Text="100000" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,40,0,0"/>
+        <Button x:Name="runButton" Content="Run" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="200" Click="runButton_Click"/>
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="SB Push(%) :" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+            <TextBlock Text="BB Push(%) :" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+            <TextBlock Text="Avg. SB profit(BB) :" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+            <TextBlock x:Name="sbPushPercent" Text="xxx" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+            <TextBlock x:Name="bbPushPercent" Text="xxx" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+            <TextBlock x:Name="avgSBprofit" Text="xxx" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+        </Grid>
+    </Grid>
 </Window>
