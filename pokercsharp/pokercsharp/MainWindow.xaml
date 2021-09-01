@@ -6,6 +6,16 @@
         xmlns:local="clr-namespace:pokercsharp"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
-    <Grid x:Name="handGrid" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-
+         
+            <TabControl Height="760" Width="760">
+                <TabItem Header="Default" Name="tab1">
+        <Grid x:Name="handGrid" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </TabItem>
+                <TabItem Header="SB" Name="tab2">
+        <Grid x:Name="handGridSB" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </TabItem>
+                <TabItem Header="BB" Name="tab3">
+        <Grid x:Name="handGridBB" Width="740" Height="740" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </TabItem>
+            </TabControl>
 </Window>
