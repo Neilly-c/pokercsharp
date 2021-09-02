@@ -1,4 +1,5 @@
 ﻿using mainsource.cfrplus;
+using pokercsharp.log;
 using pokercsharp.mainsource;
 using pokercsharp.mainsource.appendix;
 using pokercsharp.mainsource.cfrplus;
@@ -27,13 +28,14 @@ namespace pokercsharp {
     public partial class MainWindow : Window {
 
         AggregatedWinRateGrid agwr = new AggregatedWinRateGrid();
-            CFRPlus cfr = new CFRPlus();
+        CFRPlus cfr = new CFRPlus();
         string[] prefix = new string[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
         Grid wrGrid, sbGrid, bbGrid;
 
         public MainWindow() {
             InitializeComponent();
-            Debug.WriteLine("Hello!");
+            Console.SetOut(new ControlWriter(logBox));
+            Console.WriteLine("Component Initialized");
             /*
             FinalHandsDict finalHandsDict = new FinalHandsDict();
             finalHandsDict.Init();
@@ -41,17 +43,41 @@ namespace pokercsharp {
             winRateGrid.Init();
             winRateGrid.ReadCSVofGrid();
             */
+
             agwr.Init();
             InitView();
         }
 
+        static bool isCFRRunning = false;
+
         private void runButton_Click(object sender, RoutedEventArgs e) {
-            Debug.WriteLine("Activate CFR...");
-            for (int i = 0; i < Int32.Parse(iterText.Text); ++i) {
-                Dictionary<string, Node> nodeMap = cfr.Run(500000, Int32.Parse(stackText.Text));
-                ApplyCFRToView(nodeMap);
-                DoEvents();
+            if (isCFRRunning) {
+                isCFRRunning = false;
+                runButton.Content = "Run";
+            } else {
+                isCFRRunning = true;
+                runButton.Content = "Halt";
+                Console.WriteLine("Activate CFR...");
+                int iter = Int32.Parse(iterText.Text);
+                for (int i = 0; i < (iter >= 6 ? Math.Pow(10, iter - 6) : 1); ++i) {
+                    if (!isCFRRunning) {
+                        break;
+                    }
+                    Dictionary<string, Node> nodeMap = cfr.Run(1000000, Int32.Parse(stackText.Text));
+                    ApplyCFRToView(nodeMap);
+                    Console.WriteLine("Iteration " + i + ",000,000");
+                    DoEvents();
+                }
+                Console.WriteLine("Complete");
+                isCFRRunning = false;
+                runButton.Content = "Run";
             }
+        }
+
+        private void resetButton_Click(object sender, RoutedEventArgs e) {
+            Console.WriteLine("Reset");
+            cfr.refreshNodeMap();
+            InitCalcGrid();
         }
 
         private void DoEvents() {
@@ -116,30 +142,16 @@ namespace pokercsharp {
         }
 
         private void ApplyCFRToView(Dictionary<string, Node> nodeMap) {
-            sbGrid.Children.Clear();
-            bbGrid.Children.Clear();
-
-            foreach (Grid grid in new Grid[] { sbGrid, bbGrid }) {
-
-                for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
-                    TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
-                    Grid.SetColumn(txt1, i);
-                    Grid.SetColumn(txt2, 0);
-                    Grid.SetRow(txt1, 0);
-                    Grid.SetRow(txt2, i);
-                    grid.Children.Add(txt1);
-                    grid.Children.Add(txt2);
-                }
-            }
+            InitCalcGrid();
 
             double sbPush = 0, bbPush = 0;
-            foreach(string key in nodeMap.Keys) {
+            foreach (string key in nodeMap.Keys) {
                 Boolean isSB = !key[key.Length - 1].Equals('p');
                 Grid gridApplyTo = isSB ? sbGrid : bbGrid;
                 int a = Constants.handKey[key[0]],
                     b = Constants.handKey[key[1]];
                 int combination;
-                if(a != b) {
+                if (a != b) {
                     if (key[2].Equals('o')) {
                         int temp = a; a = b; b = temp;
                         combination = 12;
@@ -162,6 +174,24 @@ namespace pokercsharp {
             sbPushPercent.Text = FormatPercent((int)(sbPush / Constants.COMBINATION * 1000));
             bbPushPercent.Text = FormatPercent((int)(bbPush / Constants.COMBINATION * 1000));
             avgSBprofit.Text = cfr.utilPerIterations.ToString("F3");
+        }
+
+        private void InitCalcGrid() {
+            sbGrid.Children.Clear();
+            bbGrid.Children.Clear();
+
+            foreach (Grid grid in new Grid[] { sbGrid, bbGrid }) {
+
+                for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
+                    TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
+                    Grid.SetColumn(txt1, i);
+                    Grid.SetColumn(txt2, 0);
+                    Grid.SetRow(txt1, 0);
+                    Grid.SetRow(txt2, i);
+                    grid.Children.Add(txt1);
+                    grid.Children.Add(txt2);
+                }
+            }
         }
 
         private TextBlock TextBlockInGrid(string value) {
