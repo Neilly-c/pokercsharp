@@ -4,11 +4,18 @@ using System.Text;
 
 namespace pokercsharp.mainsource.cfrplus {
     public class Node {
-        public const int FOLD = 0, PUSH = 1, NUM_ACTIONS = 2;
+        public char[] Action_set { get; }
+        readonly int NUM_ACTIONS;
         public string infoSet { get; set; }
-        public double[] regretSum = new double[NUM_ACTIONS],
-                 strategy = new double[NUM_ACTIONS],
-                 strategySum = new double[NUM_ACTIONS];
+        public double[] regretSum, strategy, strategySum;
+
+        public Node(char[] action_set) {
+            this.Action_set = action_set;
+            NUM_ACTIONS = action_set.Length;
+            regretSum = new double[NUM_ACTIONS];
+            strategy = new double[NUM_ACTIONS];
+            strategySum = new double[NUM_ACTIONS];
+    }
 
 
         public double[] GetStrategy(double realizationWeight) {
@@ -45,10 +52,14 @@ namespace pokercsharp.mainsource.cfrplus {
             return avgStrategy;
         }
 
-        /*
         public override string ToString() {
-            return string.Format("%4s: %s", infoSet, Arrays.toString(GetAverageStrategy()));
-        }*/
+            string result = "";
+            double[] avgStrategy = GetAverageStrategy();
+            for(int i = 0; i < NUM_ACTIONS; ++i) {
+                result += Action_set[i] + ": " + avgStrategy[i] + " ";
+            }
+            return result;
+        }
 
     }
 }

@@ -3,8 +3,10 @@ using pokercsharp.log;
 using pokercsharp.mainsource;
 using pokercsharp.mainsource.appendix;
 using pokercsharp.mainsource.cfrplus;
+using pokercsharp.ui;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,7 +32,6 @@ namespace pokercsharp {
         AggregatedWinRateGrid agwr = new AggregatedWinRateGrid();
         CFRPlus cfr = new CFRPlus();
         string[] prefix = new string[] { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
-        Grid wrGrid, sbGrid, bbGrid;
 
         public MainWindow() {
             InitializeComponent();
@@ -93,11 +94,8 @@ namespace pokercsharp {
         }
 
         private void InitView() {
-            wrGrid = this.FindName("handGrid") as Grid;
-            sbGrid = this.FindName("handGridSB") as Grid;
-            bbGrid = this.FindName("handGridBB") as Grid;
 
-            foreach (Grid grid in new Grid[] { wrGrid, sbGrid, bbGrid }) {
+            foreach (Grid grid in new Grid[] { handGrid, handGridSB, handGridBB, handGridSB2 }) {
 
                 grid.ShowGridLines = true;
                 for (int i = 0; i < Constants.CARDVALUE_LEN + 1; ++i) {
@@ -135,7 +133,7 @@ namespace pokercsharp {
                         count.ToString());
                     Grid.SetRow(block, a + 1);
                     Grid.SetColumn(block, b + 1);
-                    wrGrid.Children.Add(block);
+                    handGrid.Children.Add(block);
                 }
             }
 
@@ -144,10 +142,11 @@ namespace pokercsharp {
         private void ApplyCFRToView(Dictionary<string, Node> nodeMap) {
             InitCalcGrid();
 
-            double sbPush = 0, bbPush = 0;
+            double[][] strategyProb = new double[3][] { new double[3], new double[2], new double[2] };
+            Grid[] grids = new Grid[] { handGridSB, handGridBB, handGridSB2 };
             foreach (string key in nodeMap.Keys) {
-                Boolean isSB = !key[key.Length - 1].Equals('p');
-                Grid gridApplyTo = isSB ? sbGrid : bbGrid;
+                Boolean isSB = key.Length % 2 == 1;
+                Grid gridApplyTo = grids[key.Length - 3];
                 int a = Constants.handKey[key[0]],
                     b = Constants.handKey[key[1]];
                 int combination;
@@ -161,27 +160,53 @@ namespace pokercsharp {
                 } else {
                     combination = 6;
                 }
-                if (isSB) {
-                    sbPush += nodeMap[key].GetAverageStrategy()[1] * combination;
-                } else {
-                    bbPush += nodeMap[key].GetAverageStrategy()[1] * combination;
+
+                GraphBox box;
+                double[] avgStrategy = nodeMap[key].GetAverageStrategy();
+                for (int i = 0; i < avgStrategy.Length; ++i) {
+                    strategyProb[key.Length - 3][i] += avgStrategy[i] * combination;
                 }
-                TextBlock block = TextBlockWithColorChart(((int)(nodeMap[key].GetAverageStrategy()[1] * 1000)).ToString());
-                Grid.SetRow(block, a + 1);
-                Grid.SetColumn(block, b + 1);
-                gridApplyTo.Children.Add(block);
+                switch (key.Length - 3) {
+                    case 0:
+                        box = new GraphBox();
+                        box.setValue(nodeMap[key].GetAverageStrategy());
+                        Grid.SetRow(box, a + 1);
+                        Grid.SetColumn(box, b + 1);
+                        gridApplyTo.Children.Add(box);
+                        break;
+                    case 1:
+                        box = new GraphBox();
+                        box.setValue(nodeMap[key].GetAverageStrategy());
+                        Grid.SetRow(box, a + 1);
+                        Grid.SetColumn(box, b + 1);
+                        gridApplyTo.Children.Add(box);
+                        break;
+                    case 2:
+                        box = new GraphBox();
+                        box.setValue(nodeMap[key].GetAverageStrategy());
+                        Grid.SetRow(box, a + 1);
+                        Grid.SetColumn(box, b + 1);
+                        gridApplyTo.Children.Add(box);
+                        break;
+                }
             }
-            sbPushPercent.Text = FormatPercent((int)(sbPush / Constants.COMBINATION * 1000));
-            bbPushPercent.Text = FormatPercent((int)(bbPush / Constants.COMBINATION * 1000));
-            avgSBprofit.Text = cfr.utilPerIterations.ToString("F3");
+            ObservableCollection<ObservableInfo> collection = new ObservableCollection<ObservableInfo>();
+            for (int i = 0; i < strategyProb.Length; ++i) {
+                for (int j = 0; j < strategyProb[i].Length; ++j) {
+                    collection.Add(new ObservableInfo { name = i + ", " + j, 
+                        value = FormatPercent((int)(strategyProb[i][j] / Constants.COMBINATION * 1000 / (i == 0 ? 1 : strategyProb[i - 1].Length - 1))) });
+                }
+            }
+            collection.Add(new ObservableInfo { name = "average SB profit(bb)", value = cfr.utilPerIterations.ToString("F3") });
+            summaryGrid.ItemsSource = collection;
         }
 
         private void InitCalcGrid() {
-            sbGrid.Children.Clear();
-            bbGrid.Children.Clear();
+            handGridSB.Children.Clear();
+            handGridBB.Children.Clear();
+            handGridSB2.Children.Clear();
 
-            foreach (Grid grid in new Grid[] { sbGrid, bbGrid }) {
-
+            foreach (Grid grid in new Grid[] { handGridSB, handGridBB, handGridSB2 }) {
                 for (int i = 1; i < Constants.CARDVALUE_LEN + 1; ++i) {
                     TextBlock txt1 = TextBlockInGrid(prefix[i - 1]), txt2 = TextBlockInGrid(prefix[i - 1]);
                     Grid.SetColumn(txt1, i);

@@ -19,9 +19,9 @@ namespace pokercsharp.mainsource.system.card {
             List<string> hand_abb_list = new List<string>();
             string[] template_str = { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
             for (int i = 0; i < template_str.Length; ++i) {
-                hand_abb_list.Add(template_str[i] + template_str[i]);
-                hand_abb_list.Add(template_str[i] + template_str[i]);
-                hand_abb_list.Add(template_str[i] + template_str[i]);
+                hand_abb_list.Add(template_str[i] + template_str[i] + "_");
+                hand_abb_list.Add(template_str[i] + template_str[i] + "_");
+                hand_abb_list.Add(template_str[i] + template_str[i] + "_");
                 for (int j = i + 1; j < template_str.Length; ++j) {
                     hand_abb_list.Add(template_str[i] + template_str[j] + "s");
                     hand_abb_list.Add(template_str[i] + template_str[j] + "s");

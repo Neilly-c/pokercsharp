@@ -10,7 +10,8 @@ namespace mainsource.cfrplus {
 
     public class CFRPlus {
 
-        const int FOLD = 0, PUSH = 1, NUM_ACTIONS = 2;
+        const char FOLD = 'f', RAISE_A = 'r', PUSH = 'p';
+        char[][] action_set = new char[2][] { new char[]{ FOLD, RAISE_A, PUSH }, new char[]{ FOLD, PUSH } };
         Dictionary<string, Node> nodeMap = new Dictionary<string, Node>();
         double stack = 2, bb = 1, sb = 0.5d, ante = 0;
         FullCardArr fca = new FullCardArr();
@@ -40,9 +41,9 @@ namespace mainsource.cfrplus {
             }
             utilPerIterations = util / iterations;
             Debug.WriteLine("Average game value: " + utilPerIterations);
-            foreach (string key in nodeMap.Keys) {
+            /*foreach (string key in nodeMap.Keys) {
                 Debug.WriteLine( key + ": " + nodeMap[key].GetAverageStrategy()[1]);
-            }
+            }*/
         }
 
         /*
@@ -68,47 +69,42 @@ namespace mainsource.cfrplus {
                         int temp = c; c = d; d = temp;
                     }
                 }
-                //bool isPlayerCardHigher = cards[player] > cards[opponent];
                 switch (history) {
-                    /*  kuhn poker
-                    case "ff":
-                        return isPlayerCardHigher ? 1 : -1;
-                    case "fpp":
                     case "pp":
-                        return isPlayerCardHigher ? 2 : -2;
-                    case "fpf":
-                    case "pf":
-                        return 1;
-                    */
-                    case "pp":
+                    case "rpp":
                         return -stack + ((double)stack * (double)digest_grid[a][b][c][d] / ((double)Constants._48C5 * (double)digest_count[a][b][c][d]));
+                    case "rpf":
+                        return 2 * bb;
                     case "pf":
+                    case "rf":
                         return bb;
                     case "f":
                         return sb;
                 }
             }
 
+            char[] action_set_applied = history.Length == 0 ? action_set[0] : action_set[1];
+
             string infoSet = cards[player] + history;
             if (!nodeMap.ContainsKey(infoSet)) {
-                Node newNode = new Node();
+                Node newNode = new Node(action_set_applied);
                 newNode.infoSet = infoSet;
                 nodeMap.Add(infoSet, newNode);
             }
             Node node = nodeMap[infoSet];
 
             double[] strategy = node.GetStrategy(player == 0 ? p0 : p1);
-            double[] util = new double[NUM_ACTIONS];
+            double[] util = new double[action_set_applied.Length];
             double nodeUtil = 0;
-            for (int a = 0; a < NUM_ACTIONS; a++) {
-                string nextHistory = history + (a == 0 ? "f" : "p");
+            for (int a = 0; a < action_set_applied.Length; a++) {
+                string nextHistory = history + action_set_applied[a];
                 util[a] = player == 0
                     ? -CFR(cards, nextHistory, p0 * strategy[a], p1, 1)
                     : -CFR(cards, nextHistory, p0, p1 * strategy[a], 1);
                 nodeUtil += strategy[a] * util[a];
             }
 
-            for (int a = 0; a < NUM_ACTIONS; a++) {
+            for (int a = 0; a < action_set_applied.Length; a++) {
                 double regret = util[a] - nodeUtil;
                 node.regretSum[a] += (player == 0 ? p1 : p0) * regret;
             }
