@@ -8,6 +8,8 @@ namespace pokercsharp.mainsource.system.card {
 
         public Card[] card_arr { get; set; }
 
+        public string[] card_str_arr { get; set; }
+
         public string[] hand_abbreviated_arr { get; set; }
 
         public FullCardArr() {
@@ -16,6 +18,11 @@ namespace pokercsharp.mainsource.system.card {
                 Card c = new Card(CardValueExt.GetCardValueFromInt(1 + (i / 4)), SuitExt.GetSuitFromInt(1 + (i % 4)));
                 card_arr[c.GetHashCode()] = c;
             }
+            List<string> card_str_list = new List<string>();
+            foreach(Card c in card_arr) {
+                card_str_list.Add(c.ToAbbreviateString());
+            }
+            card_str_arr = card_str_list.ToArray();
             List<string> hand_abb_list = new List<string>();
             string[] template_str = { "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2" };
             for (int i = 0; i < template_str.Length; ++i) {

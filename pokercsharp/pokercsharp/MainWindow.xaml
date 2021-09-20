@@ -5,19 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pokercsharp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="MainWindow" Height="800" Width="1400">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="820"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="200"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TabControl Height="760" Width="760" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <TreeView x:Name="nodeTree" Grid.RowSpan="3">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="x:Type src:NodeGroup"
+                                          ItemsSource="{Binding children}">
+                    <TextBlock Text="{Binding history}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+        <TabControl Height="760" Width="760" Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TabItem Header="Default" Name="tab1">
                 <Grid x:Name="handGrid" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top">
                 </Grid>
@@ -32,13 +46,16 @@
                 <Grid x:Name="handGridSB2" Width="720" Height="720" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </TabItem>
         </TabControl>
-        <Label Grid.Row="1" Grid.Column="1" Content="Stack(BB) :" Target="{Binding ElementName=stackText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
-        <TextBox x:Name="stackText" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" TextAlignment="Right" Text="20" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label Grid.Row="1" Grid.Column="1" Content="Iteration(Log) :" Target="{Binding ElementName=iterText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="0,40,0,0"/>
-        <TextBox x:Name="iterText" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" TextAlignment="Right" Text="8" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,40,0,0"/>
-        <Button x:Name="runButton" Grid.Row="1" Content="Run" FontSize="20" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="runButton_Click"/>
-        <Button x:Name="resetButton" Grid.Row="1" Content="Reset" FontSize="20" Grid.Column="1" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="resetButton_Click"/>
-        <DataGrid x:Name="summaryGrid" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="logBox" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top" Height="Auto" VerticalScrollBarVisibility="Visible"/>
+        <Label Grid.Row="1" Grid.Column="2" Content="Stack(BB) :" Target="{Binding ElementName=stackText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox x:Name="stackText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" TextAlignment="Right" Text="20" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label Grid.Row="1" Grid.Column="2" Content="Iteration(Log) :" Target="{Binding ElementName=iterText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="0,40,0,0"/>
+        <TextBox x:Name="iterText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" TextAlignment="Right" Text="8" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,40,0,0"/>
+        <TextBox x:Name="boardText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="Jc7d2h" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,80,0,0"/>
+        <ToggleButton x:Name="preToggle" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Margin="0,0,0,60" VerticalAlignment="Bottom" Width="60" Height="20" Click="preToggle_Click"/>
+        <Button x:Name="buildButton" Grid.Row="1" Content="Build Tree" FontSize="20" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,40" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="buildButton_Click"/>
+        <Button x:Name="runButton" Grid.Row="1" Content="Run" FontSize="20" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="runButton_Click"/>
+        <Button x:Name="resetButton" Grid.Row="1" Content="Reset" FontSize="20" Grid.Column="2" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="resetButton_Click"/>
+        <DataGrid x:Name="summaryGrid" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="logBox" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top" Height="Auto" VerticalScrollBarVisibility="Visible"/>
     </Grid>
 </Window>

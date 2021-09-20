@@ -32,14 +32,14 @@ namespace mainsource.system.parser {
             {'d', Suit.DIAMONDS }
         };
 
-        private Card ParseCard(char value, char suit){
+        private static Card ParseCard(char value, char suit){
             CardValue cardValue = CHARACTER_CARD_VALUE_MAP[value];
             Suit cardSuit = CHARACTER_SUIT_MAP[suit];
 
             return new Card(cardValue, cardSuit);
         }
 
-        public Card[] Parse(string str){
+        public static Card[] Parse(string str){
             if (str == null) {
                 throw new StringHandParserException("A valid hand string needs to be provided");
             }
@@ -60,7 +60,7 @@ namespace mainsource.system.parser {
                 }
 
                 if (currentValue != '0' && currentSuit != '0'){
-                    Card parsedCard = this.ParseCard(currentValue, currentSuit);
+                    Card parsedCard = ParseCard(currentValue, currentSuit);
                     parsedCardList.Add(parsedCard);
 
                     currentValue = '0';

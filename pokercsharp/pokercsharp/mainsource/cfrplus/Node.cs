@@ -9,13 +9,25 @@ namespace pokercsharp.mainsource.cfrplus {
         public string infoSet { get; set; }
         public double[] regretSum, strategy, strategySum;
 
-        public Node(char[] action_set) {
+        public double pot { get; set; }
+        public double stack { get; set; }
+        public double toCall { get; set; }
+
+        public double p0 { get; set; }
+        public double p1 { get; set; }
+        public double p_ { get; set; }
+        public bool isPreflop { get; }
+        public int plr { get; }
+
+        public Node(char[] action_set, bool isPreflop, int plr) {
             this.Action_set = action_set;
+            this.isPreflop = isPreflop;
+            this.plr = plr;
             NUM_ACTIONS = action_set.Length;
             regretSum = new double[NUM_ACTIONS];
             strategy = new double[NUM_ACTIONS];
             strategySum = new double[NUM_ACTIONS];
-    }
+        }
 
 
         public double[] GetStrategy(double realizationWeight) {
@@ -55,7 +67,7 @@ namespace pokercsharp.mainsource.cfrplus {
         public override string ToString() {
             string result = "";
             double[] avgStrategy = GetAverageStrategy();
-            for(int i = 0; i < NUM_ACTIONS; ++i) {
+            for (int i = 0; i < NUM_ACTIONS; ++i) {
                 result += Action_set[i] + ": " + avgStrategy[i] + " ";
             }
             return result;

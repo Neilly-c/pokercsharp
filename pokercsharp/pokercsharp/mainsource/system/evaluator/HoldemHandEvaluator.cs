@@ -8,6 +8,11 @@ namespace mainsource.system.evaluator {
 
     public class HoldemHandEvaluator : HandEvaluator {
 
+        /// <summary>
+        /// receive hole cards and board to return its final hand value.
+        /// </summary>
+        /// <param name="cards">hole cards and board, sum of length must be 7</param>
+        /// <returns>FinalHand</returns>
         public FinalHand Evaluate(params Card[][] cards) {
             int len = 0;
             for (int i = 0; i < cards.Length; ++i) {

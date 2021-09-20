@@ -43,10 +43,9 @@ namespace pokercsharp.mainsource.cfrplus {
                     ++row;
                 }
             }
-            StringHandParser parser = new StringHandParser();
             int[] key = new int[Constants.COMBINATION];
             for (int i = 0; i < Constants.COMBINATION; ++i) {
-                Card[] card_arr_p0 = parser.Parse(hand_arr[i]);
+                Card[] card_arr_p0 = StringHandParser.Parse(hand_arr[i]);
                 int a = 12 - ((((int)card_arr_p0[0].GetValue()) + 11) % 13);
                 int b = 12 - ((((int)card_arr_p0[1].GetValue()) + 11) % 13);
                 if (a > b) {
@@ -59,7 +58,7 @@ namespace pokercsharp.mainsource.cfrplus {
                     if(full_grid[i][j] == -1) {
                         continue;
                     }
-                    Card[] card_arr_p1 = parser.Parse(hand_arr[j]);
+                    Card[] card_arr_p1 = StringHandParser.Parse(hand_arr[j]);
                     int c = 12 - ((((int)card_arr_p1[0].GetValue()) + 11) % 13);
                     int d = 12 - ((((int)card_arr_p1[1].GetValue()) + 11) % 13);
                     if (c > d) {
