@@ -111,7 +111,7 @@ namespace pokercsharp.mainsource.appendix {
                             }
 
                             full_grid[i][j] = winCount * 2 + evenCount;         //集計して勝った回数を書いておく　実際に使う時は分母で割って確率を出せばよい(double型より軽く正確)
-                            full_grid[j][i] = count * 2 - full_grid[i][j]; //逆のマッチアップは勝率も逆にしておく
+                            full_grid[j][i] = count * 2 - full_grid[i][j];      //逆のマッチアップは勝率も逆にしておく
 
                             Debug.WriteLine(hand_arr[i][0].ToAbbreviateString() + hand_arr[i][1].ToAbbreviateString() + "-"
                                 + hand_arr[j][0].ToAbbreviateString() + hand_arr[j][1].ToAbbreviateString() + ", " +
@@ -202,6 +202,8 @@ namespace pokercsharp.mainsource.appendix {
                 File.AppendAllText(@"D:\Csharp\pokercsharp\winRateGrid.txt",
                     string.Join(", ", full_grid[i]) + Environment.NewLine);
             }
+
+            ReadCSVofGrid();
 
         }
 

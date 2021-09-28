@@ -15,7 +15,7 @@ namespace pokercsharp.mainsource.cfrplus {
         const char DEAL_BOARD = 'z';
         FullCardArr fca = new FullCardArr();
         string[] hands;
-        const byte CAP = 4;
+        const byte CAP = 2;
         const byte SB = 1, BB = 2;
 
         public CFRPlusFLPostflop() {
@@ -145,16 +145,13 @@ namespace pokercsharp.mainsource.cfrplus {
                     }
                     board_str += board[i].ToAbbreviateString();
                 }
-                string infoSet = board_str + history;
+                string infoSet = board_str + "," + history;
                 if (!nodeMap.ContainsKey(infoSet)) {
                     Node newNode = new Node(new char[] { DEAL_BOARD }, false, -1);     //たくさんある
                     newNode.infoSet = infoSet;
                     nodeMap.Add(infoSet, newNode);
                 }
                 Node node = nodeMap[infoSet];
-                node.p0 = p0;
-                node.p1 = p1;
-                node.p_ = p_;
 
                 Card next_card = DealBoard(board, cards[0], cards[1]);
                 Card[] board_next = new Card[5];
@@ -186,7 +183,7 @@ namespace pokercsharp.mainsource.cfrplus {
                 }
 
                 char[] action_set_applied = LegalActionSetPostflop(street_hist);
-                string infoSet = hands_str + board_str + history;
+                string infoSet = hands_str + "," + board_str + "," + history;
                 if (!nodeMap.ContainsKey(infoSet)) {
                     Node newNode = new Node(action_set_applied, false, player);
                     newNode.infoSet = infoSet;

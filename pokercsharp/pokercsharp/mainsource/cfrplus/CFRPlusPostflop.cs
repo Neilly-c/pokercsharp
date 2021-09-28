@@ -145,9 +145,6 @@ namespace pokercsharp.mainsource.cfrplus {
                     nodeMap.Add(infoSet, newNode);
                 }
                 Node node = nodeMap[infoSet];
-                node.p0 = p0;
-                node.p1 = p1;
-                node.p_ = p_;
 
                 Card next_board = DealNewCard(board, cards[0], cards[1]);
                 if (Array.IndexOf(board, null) == 3) {        //turn

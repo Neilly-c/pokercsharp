@@ -13,9 +13,6 @@ namespace pokercsharp.mainsource.cfrplus {
         public double stack { get; set; }
         public double toCall { get; set; }
 
-        public double p0 { get; set; }
-        public double p1 { get; set; }
-        public double p_ { get; set; }
         public bool isPreflop { get; }
         public int plr { get; }
 

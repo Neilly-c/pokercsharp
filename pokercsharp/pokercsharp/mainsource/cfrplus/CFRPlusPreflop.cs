@@ -130,9 +130,6 @@ namespace mainsource.cfrplus {
                 nodeMap.Add(infoSet, newNode);
             }
             Node node = nodeMap[infoSet];
-            node.p0 = p0;
-            node.p1 = p1;
-            node.p_ = p_;
 
             double[] strategy = node.GetStrategy(player == 0 ? p0 : p1);
             double[] util = new double[action_set_applied.Length];

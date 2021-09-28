@@ -61,6 +61,12 @@ namespace pokercsharp.mainsource.appendix {
 
         }
 
+        /// <summary>
+        /// 数値型による高速ハンドバリュー判定
+        /// Init()を走らせていないと何も返せないので注意
+        /// </summary>
+        /// <param name="cards">5枚のカード</param>
+        /// <returns></returns>
         public static int EvaluateByHash(Card[] cards) {
             int a = cards[0].GetHashCode(),
                 b = cards[1].GetHashCode(),
@@ -70,6 +76,12 @@ namespace pokercsharp.mainsource.appendix {
             return finalDictArr[a][b][c][d][e];
         }
 
+        /// <summary>
+        /// 数値型による高速ハンドバリュー判定
+        /// Init()を走らせていないと何も返せないので注意
+        /// </summary>
+        /// <param name="cards_int">カードのハッシュ5つ</param>
+        /// <returns></returns>
         public static int EvaluateByHash(params int[] cards_int) {
             return finalDictArr[cards_int[0]][cards_int[1]][cards_int[2]][cards_int[3]][cards_int[4]];
         }

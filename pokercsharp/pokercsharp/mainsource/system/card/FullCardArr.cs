@@ -6,10 +6,20 @@ using System.Text;
 namespace pokercsharp.mainsource.system.card {
     class FullCardArr {
 
+        /// <summary>
+        /// 52枚のカードの配列
+        /// </summary>
         public Card[] card_arr { get; set; }
 
+        /// <summary>
+        /// 52枚のカード(string)の配列
+        /// </summary>
         public string[] card_str_arr { get; set; }
 
+        /// <summary>
+        /// ハンドの組み合わせ(略記)の配列 
+        /// スーテッド:ペア:オフスート=2:3:6の割合で入っている
+        /// </summary>
         public string[] hand_abbreviated_arr { get; set; }
 
         public FullCardArr() {

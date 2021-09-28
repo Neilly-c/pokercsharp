@@ -6,4 +6,11 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="mainsource\system\新しいフォルダー1\**" />
+    <EmbeddedResource Remove="mainsource\system\新しいフォルダー1\**" />
+    <None Remove="mainsource\system\新しいフォルダー1\**" />
+    <Page Remove="mainsource\system\新しいフォルダー1\**" />
+  </ItemGroup>
+
 </Project>
