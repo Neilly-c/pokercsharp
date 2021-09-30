@@ -218,6 +218,7 @@ namespace pokercsharp {
                     for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
                         double[] values = new double[5] { 1, 0, 0, 0, 0 };
                         inputGraphBoxes[i][j].SetValue(values);
+                        inputGraphBoxes[i][j].SetProb(1);
                     }
                 }
             }
