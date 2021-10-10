@@ -12,20 +12,10 @@ namespace pokercsharp.ui {
         }
 
         private int loop = 0;
+        public string[] actions { get; set; } = new string[3] { "Fold", "Call", "Raise" };
 
-        protected override void OnDragEnter(DragEventArgs e) {
-            this.OnMouseLeftButtonDown(null);
-        }
-
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs args) {
-            double[] decision = new double[3];
-            decision[loop % 3] = 100;
-            ++loop;
-            SetValue(decision);
-        }
-
-        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e) {
-            base.OnMouseRightButtonDown(e);
+        public void SetActions(string[] actions) {
+            this.actions = actions;
         }
 
         public override void SetProb(double p) {

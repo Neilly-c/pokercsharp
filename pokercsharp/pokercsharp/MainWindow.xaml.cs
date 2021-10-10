@@ -8,10 +8,12 @@ using pokercsharp.ui;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -27,14 +29,16 @@ namespace pokercsharp {
 
         private HeatBox[][] heatBoxes;
         private GraphBox[][] graphBoxes;
+        private Button[] actionButtons;
+        private RadioButton[] actionRadios;
         private InputGraphBox[][] inputGraphBoxes;
         private bool isToCalcPostflop = false;
         private Thread worker;
         private WorkerThread wt;
 
-        private ComboBox[][] actionSelectCombos;
-        private Strategys strategys = new Strategys();
         const int PLAYERS = 6;
+        private Strategys strategys = new Strategys();
+        ActionKeyParser akp = new ActionKeyParser(PLAYERS, 5);
         readonly string[] actions = new string[3] { "Fold", "Call", "Raise" };
 
         public Dictionary<string, Node> nodeMap { get; set; }
@@ -61,10 +65,8 @@ namespace pokercsharp {
                 heatBoxes[i] = new HeatBox[Constants.CARDVALUE_LEN];
                 inputGraphBoxes[i] = new InputGraphBox[Constants.CARDVALUE_LEN];
             }
-            actionSelectCombos = new ComboBox[PLAYERS][];
-            for (int i = 0; i < PLAYERS; ++i) {
-                actionSelectCombos[i] = new ComboBox[3];
-            }
+            actionButtons = new Button[PLAYERS] { actUTG, actHJ, actCO, actBTN, actSB, actBB };
+            actionRadios = new RadioButton[PLAYERS] { radioUTG, radioHJ, radioCO, radioBTN, radioSB, radioBB };
             InitView();
             wt = new WorkerThread(this, cfr, 0, 0, boardText.Text, false);
         }
@@ -167,84 +169,47 @@ namespace pokercsharp {
                     }
                     inputGraphBoxes[a][b].SetText(str);
                     inputGraphBoxes[a][b].SetValue(new double[3] { 1, 0, 0 });
+                    inputGraphBoxes[a][b].MouseLeftButtonDown += SetHandStrategy1;
+                    inputGraphBoxes[a][b].MouseRightButtonDown += SetHandStrategy2;
                     inputGraphBoxes[a][b].MouseLeave += RangeUpdate;
                 }
             }
-            actionSelectCombos[0][0] = actSelectUTG1;
-            actionSelectCombos[1][0] = actSelectHJ1;
-            actionSelectCombos[2][0] = actSelectCO1;
-            actionSelectCombos[3][0] = actSelectBTN1;
-            actionSelectCombos[4][0] = actSelectSB1;
-            actionSelectCombos[5][0] = actSelectBB1;
-            for (int i = 0; i < PLAYERS; ++i) {
-                actionSelectCombos[i][0].ItemsSource = i == 0 ? new string[] { "Action", "Fold", "Raise" } : new string[] { "-", "Action", "Fold", "Raise" };
-                for (int j = 1; j < actionSelectCombos[i].Length; ++j) {
-                    actionSelectCombos[i][j] = new ComboBox();
-                    Grid.SetRow(actionSelectCombos[i][j], i + 1);
-                    Grid.SetColumn(actionSelectCombos[i][j], j + 1);
-                    actionselectGrid.Children.Add(actionSelectCombos[i][j]);
-                    actionSelectCombos[i][j].ItemsSource = new string[] { "-", "Action", "Fold", "Call", "Raise" };
-                    actionSelectCombos[i][j].IsEnabled = false;
-                }
-            }
-            for (int i = 0; i < PLAYERS; ++i) {
-                for (int j = 0; j < actionSelectCombos[i].Length; ++j) {
-                    actionSelectCombos[i][j].SelectionChanged += OnActionSelectionChanged;
-                    actionSelectCombos[i][j].SelectedIndex = 0;
-                }
-            }
         }
 
-        private void OnActionSelectionChanged(object sender, SelectionChangedEventArgs e) {
-
-            string key = GetActionKey();
-            if (strategys.strategyByActionFacing.ContainsKey(key)) {
-                RangeStrategy applyStrategy = strategys.strategyByActionFacing[key];
-                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
-                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
-                        Dictionary<string, double> dict = applyStrategy.GetStrategyDict(i, j);
-                        double[] values = new double[5];
-                        for (int a = 0; a < actions.Length; ++a) {
-                            if (dict.ContainsKey(actions[a])) {
-                                values[a] = dict[actions[a]];
-                            }
-                        }
-                        inputGraphBoxes[i][j].SetValue(values);
-                    }
-                }
-            } else {
-                strategys.strategyByActionFacing.Add(key, new RangeStrategy());
-                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
-                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
-                        double[] values = new double[5] { 1, 0, 0, 0, 0 };
-                        inputGraphBoxes[i][j].SetValue(values);
-                        inputGraphBoxes[i][j].SetProb(1);
-                    }
-                }
+        private void SetHandStrategy1(object sender, MouseButtonEventArgs e) {
+            double[] decision = new double[3];
+            if ((bool)clickDefFold.IsChecked) {
+                decision[0] = 100;
+            } else if ((bool)clickDefCall.IsChecked) {
+                decision[1] = 100;
+            } else if ((bool)clickDefRaise.IsChecked) {
+                decision[2] = 100;
             }
-            while(key.Length >= 6) {
-                key = key.Substring(0, key.Length - 6);
-                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
-                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
-                        if (strategys.strategyByActionFacing.ContainsKey(key)) {
-                            RangeStrategy parentStrategy = strategys.strategyByActionFacing[key];
-                            double prob = inputGraphBoxes[i][j].prob;
-                            string actionKey = actionSelectCombos[key.Length / PLAYERS][key.Length % PLAYERS].SelectedItem.ToString();
-                            prob *= parentStrategy.GetStrategyDict(i, j)[actionKey];
-                            inputGraphBoxes[i][j].SetProb(prob);
-                        } else {
-                            strategys.strategyByActionFacing.Add(key, new RangeStrategy());
-                        }
-
-                    }
-                }
-            }
+            (sender as InputGraphBox).SetValue(decision);
         }
 
+        private void SetHandStrategy2(object sender, MouseButtonEventArgs e) {
+            double[] decision = new double[3];
+            decision[0] = 100;
+            (sender as InputGraphBox).SetValue(decision);
+        }
+
+        private void ApplyKey_Click(object sender, RoutedEventArgs e) {
+            ChangeVisualizedRange(GetActionKey());
+        }
+
+        /// <summary>
+        /// レンジ選択の変更があるごとに呼び出される
+        /// RangeStrategyを保存し直す
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RangeUpdate(object sender, System.Windows.Input.MouseEventArgs e) {
             double[] valueSum = new double[5];
+            double childSum = 0;
             for (int a = 0; a < Constants.CARDVALUE_LEN; ++a) {
                 for (int b = 0; b < Constants.CARDVALUE_LEN; ++b) {
+                    childSum += (int)(inputGraphBoxes[a][b].Tag) * inputGraphBoxes[a][b].prob;
                     double[] values = inputGraphBoxes[a][b].values;
                     double parent = 0;
                     foreach (double d in values) {
@@ -252,7 +217,7 @@ namespace pokercsharp {
                     }
                     if (parent > 0) {
                         for (int i = 0; i < values.Length; ++i) {
-                            valueSum[i] += values[i] / parent * (int)(inputGraphBoxes[a][b].Tag);
+                            valueSum[i] += values[i] / parent * (int)(inputGraphBoxes[a][b].Tag) * inputGraphBoxes[a][b].prob;
                         }
                     }
                 }
@@ -269,40 +234,83 @@ namespace pokercsharp {
                 }
             }
 
-            ObservableCollection<ObservableInfo> collection = new ObservableCollection<ObservableInfo>();
-            for (int i = 0; i < valueSum.Length; ++i) {
-                collection.Add(new ObservableInfo {
-                    name = i.ToString(),
+            ObservableCollection<RangeInfo> collection = new ObservableCollection<RangeInfo>();
+            for (int i = 0; i < actions.Length; ++i) {
+                collection.Add(new RangeInfo {
+                    name = actions[i],
                     value = FormatPercent((int)(valueSum[i] / Constants.COMBINATION * 1000)),
+                    childValue = FormatPercent((int)(valueSum[i] / childSum * 1000)),
                 });
             }
             summaryGridRange.ItemsSource = collection;
         }
 
-        private string GetActionKey() {
-            string key = "";
-            for (int i = 0; i < actionSelectCombos[0].Length; ++i) {
-                for (int j = 0; j < PLAYERS; ++j) {
-                    if (actionSelectCombos[j][i].SelectedIndex == 0 || actionSelectCombos[j][i].SelectedIndex == 1) {
+        private void ChangeVisualizedRange(string newKey) {
+
+            if (strategys.strategyByActionFacing.ContainsKey(newKey)) {
+                RangeStrategy applyStrategy = strategys.strategyByActionFacing[newKey];
+                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
+                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
+                        Dictionary<string, double> dict = applyStrategy.GetStrategyDict(i, j);
+                        double[] values = new double[5];
+                        for (int a = 0; a < actions.Length; ++a) {
+                            if (dict.ContainsKey(actions[a])) {
+                                values[a] = dict[actions[a]];
+                            }
+                        }
+                        inputGraphBoxes[i][j].SetValue(values);
+                        inputGraphBoxes[i][j].SetProb(1);
+                    }
+                }
+            } else {
+                strategys.strategyByActionFacing.Add(newKey, new RangeStrategy());
+                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
+                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
+                        double[] values = new double[5] { 1, 0, 0, 0, 0 };
+                        inputGraphBoxes[i][j].SetValue(values);
+                        inputGraphBoxes[i][j].SetProb(1);
+                    }
+                }
+            }
+            string parentKey = newKey;
+            while (parentKey.Length >= 6 + 2) {       //prefix"PF"の2
+                char prevActionChar = parentKey[^6];
+                string actionKey = actions[0];
+                switch (prevActionChar) {
+                    case 'f':
+                        actionKey = actions[0];
                         break;
-                    } else {
-                        switch (actionSelectCombos[j][i].SelectedItem) {
-                            case "Fold":
-                                key += "f";
-                                break;
-                            case "Check":
-                                key += "x";
-                                break;
-                            case "Call":
-                                key += "c";
-                                break;
-                            case "Raise":
-                                key += "r";
-                                break;
+                    case 'c':
+                        actionKey = actions[1];
+                        break;
+                    case 'r':
+                    default:
+                        actionKey = actions[2];
+                        break;
+                }
+                parentKey = parentKey[0..^6];
+                for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
+                    for (int j = 0; j < Constants.CARDVALUE_LEN; ++j) {
+                        if (strategys.strategyByActionFacing.ContainsKey(parentKey)) {
+                            RangeStrategy parentStrategy = strategys.strategyByActionFacing[parentKey];
+                            double prob = inputGraphBoxes[i][j].prob;
+                            if (parentStrategy.GetStrategyDict(i, j).ContainsKey(actionKey)) {
+                                prob *= parentStrategy.GetStrategyDict(i, j)[actionKey];
+                            } else {
+                                Debug.WriteLine("No such Key");
+                                prob *= 0;
+                            }
+                            inputGraphBoxes[i][j].SetProb(prob);
+                        } else {
+                            strategys.strategyByActionFacing.Add(parentKey, new RangeStrategy());
                         }
                     }
                 }
             }
+        }
+
+        private string GetActionKey() {
+            string key = "PF" + strKey.Text;
             return key;
         }
 
@@ -443,13 +451,13 @@ namespace pokercsharp {
                     graphBoxes[a][b].AddNode(nodeMap[key]);
                 }
 
-                ObservableCollection<ObservableInfo> collection = new ObservableCollection<ObservableInfo>();
+                ObservableCollection<RangeInfo> collection = new ObservableCollection<RangeInfo>();
                 for (int i = 0; i < strategyProb.Length; ++i) {
-                    collection.Add(new ObservableInfo {
+                    collection.Add(new RangeInfo {
                         name = i.ToString(), value = FormatPercent((int)(strategyProb[i] / Constants.COMBINATION * 1000))
                     });
                 }
-                collection.Add(new ObservableInfo { name = "average SB profit(bb)", value = cfr.utilPerIterations.ToString("F3") });
+                collection.Add(new RangeInfo { name = "average SB profit(bb)", value = cfr.utilPerIterations.ToString("F3") });
                 summaryGrid.ItemsSource = collection;
 
             } else {
@@ -478,21 +486,19 @@ namespace pokercsharp {
                     graphBoxes[a][b].AddNode(nodeMap[key]);
                 }
 
-                ObservableCollection<ObservableInfo> collection = new ObservableCollection<ObservableInfo>();
+                ObservableCollection<RangeInfo> collection = new ObservableCollection<RangeInfo>();
                 for (int i = 0; i < strategyProb.Length; ++i) {
                     for (int j = 0; j < strategyProb[i].Length; ++j) {
-                        collection.Add(new ObservableInfo {
+                        collection.Add(new RangeInfo {
                             name = i + ", " + j,
                             value = FormatPercent((int)(strategyProb[i][j] / Constants.COMBINATION * 1000 / (i == 0 ? 1 : strategyProb[i - 1].Length - 1)))
                         });
                     }
                 }
-                collection.Add(new ObservableInfo { name = "average SB profit(bb)", value = cfr.utilPerIterations.ToString("F3") });
+                collection.Add(new RangeInfo { name = "average SB profit(bb)", value = cfr.utilPerIterations.ToString("F3") });
                 summaryGrid.ItemsSource = collection;
 
             }
         }
-
-
     }
 }

@@ -70,7 +70,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="7*"/>
+                        <RowDefinition Height="4*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
@@ -78,25 +78,25 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="0">UTG</TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="0">HJ</TextBlock>
-                    <TextBlock Grid.Row="3" Grid.Column="0">CO</TextBlock>
-                    <TextBlock Grid.Row="4" Grid.Column="0">BTN</TextBlock>
-                    <TextBlock Grid.Row="5" Grid.Column="0">SB</TextBlock>
-                    <TextBlock Grid.Row="6" Grid.Column="0">BB</TextBlock>
-                    <ComboBox x:Name="actSelectUTG1" Grid.Row="1" Grid.Column="1">
-                    </ComboBox>
-                    <ComboBox x:Name="actSelectHJ1" Grid.Row="2" Grid.Column="1">
-                    </ComboBox>
-                    <ComboBox x:Name="actSelectCO1" Grid.Row="3" Grid.Column="1">
-                    </ComboBox>
-                    <ComboBox x:Name="actSelectBTN1" Grid.Row="4" Grid.Column="1">
-                    </ComboBox>
-                    <ComboBox x:Name="actSelectSB1" Grid.Row="5" Grid.Column="1">
-                    </ComboBox>
-                    <ComboBox x:Name="actSelectBB1" Grid.Row="6" Grid.Column="1">
-                    </ComboBox>
+                    <TextBox x:Name="strKey" Grid.ColumnSpan="3"/>
+                    <Button x:Name="applyKey" Grid.Column="3" Click="ApplyKey_Click"/>
+                    <RadioButton GroupName="plrDefs" x:Name="radioUTG" Grid.Row="1" Grid.Column="0" IsChecked="True">UTG</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="radioHJ" Grid.Row="2" Grid.Column="0">HJ</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="radioCO" Grid.Row="3" Grid.Column="0">CO</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="radioBTN" Grid.Row="4" Grid.Column="0">BTN</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="radioSB" Grid.Row="5" Grid.Column="0">SB</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="radioBB" Grid.Row="6" Grid.Column="0">BB</RadioButton>
+                    <Button x:Name="actUTG" Grid.Row="1" Grid.Column="1"/>
+                    <Button x:Name="actHJ" Grid.Row="2" Grid.Column="1"/>
+                    <Button x:Name="actCO" Grid.Row="3" Grid.Column="1"/>
+                    <Button x:Name="actBTN" Grid.Row="4" Grid.Column="1"/>
+                    <Button x:Name="actSB" Grid.Row="5" Grid.Column="1"/>
+                    <Button x:Name="actBB" Grid.Row="6" Grid.Column="1"/>
+                    <RadioButton GroupName="clickDefs" x:Name="clickDefFold" Grid.Row="8" Grid.Column="0">Fold</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="clickDefCall" Grid.Row="8" Grid.Column="1">Call</RadioButton>
+                    <RadioButton GroupName="clickDefs" x:Name="clickDefRaise" Grid.Row="8" Grid.Column="2">Raise</RadioButton>
                 </Grid>
                 <DataGrid x:Name="summaryGridRange" Grid.Column="1" Grid.Row="1"/>
             </Grid>
