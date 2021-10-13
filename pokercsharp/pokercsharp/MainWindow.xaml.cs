@@ -171,7 +171,6 @@ namespace pokercsharp {
                     inputGraphBoxes[a][b].SetValue(new double[3] { 1, 0, 0 });
                     inputGraphBoxes[a][b].MouseLeftButtonDown += SetHandStrategy1;
                     inputGraphBoxes[a][b].MouseRightButtonDown += SetHandStrategy2;
-                    inputGraphBoxes[a][b].MouseLeave += RangeUpdate;
                 }
             }
         }
@@ -186,12 +185,52 @@ namespace pokercsharp {
                 decision[2] = 100;
             }
             (sender as InputGraphBox).SetValue(decision);
+            RangeUpdate();
         }
 
         private void SetHandStrategy2(object sender, MouseButtonEventArgs e) {
             double[] decision = new double[3];
             decision[0] = 100;
             (sender as InputGraphBox).SetValue(decision);
+            RangeUpdate();
+        }
+        
+        ///<summary>
+        ///親レンジ含め選択を修正する
+        ///</summary>
+        private void SetHandStrategy3(object sender, MouseButtonEventArgs e){
+            int row = 0, col = 0;
+            while((sender as InputGraphBox).Equals(inputGraphBoxes[row][col])){
+                ++col;
+                if(col >= Constants.CARDVALUE_LEN){
+                    col = 0;
+                    ++row;
+                }
+            }       //発見できなかったときの処理がない(そんなことは起きないはずだが)
+            double[] decision = new double[3];
+            decision[0] = 100;
+            (sender as InputGraphBox).SetValue(decision);
+            
+            string key = GetActionKey();
+            while (key.Length >= 6 + 2) {
+                char prevActionChar = parentKey[^6];
+                key = key[0..^6];
+                double[] dec = new double[3];
+                switch(prevActionChar){
+                    case 'f':
+                        dec[0] = 100;
+                        break;
+                    case 'c':
+                        dec[1] = 100;
+                        breal;
+                    case 'r':
+                    default:
+                        dec[2] = 100;
+                        break;
+                }
+                OneRangeUpdate(key, row, col, dec);
+            }
+            RangeUpdate();
         }
 
         private void ApplyKey_Click(object sender, RoutedEventArgs e) {
@@ -202,9 +241,7 @@ namespace pokercsharp {
         /// レンジ選択の変更があるごとに呼び出される
         /// RangeStrategyを保存し直す
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RangeUpdate(object sender, System.Windows.Input.MouseEventArgs e) {
+        private void RangeUpdate() {
             double[] valueSum = new double[5];
             double childSum = 0;
             for (int a = 0; a < Constants.CARDVALUE_LEN; ++a) {
@@ -243,6 +280,18 @@ namespace pokercsharp {
                 });
             }
             summaryGridRange.ItemsSource = collection;
+        }
+        
+        ///<summary>
+        ///RangeUpdateを1つのハンドに対してだけ適用する
+        ///</summary>
+        private void OneRandeUpdate(string key, int row, int col, double[] decision){
+            if (!strategys.strategyByActionFacing.ContainsKey(key)) {
+                Debug.WriteLine("Creating new strategy is not a safe method: OneRangeUpdate()");
+                strategys.strategyByActionFacing.Add(key, new RangeStrategy());
+            }
+            RangeStrategy target = strategys.strategyByActionFacing[key];
+            target.SetStrategy(row, col, decision, actions);
         }
 
         private void ChangeVisualizedRange(string newKey) {
