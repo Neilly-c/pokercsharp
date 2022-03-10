@@ -10,7 +10,7 @@
     <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ui\InputGraphBoxDialog.xaml">
+    <Page Update="ui\customview\InputGraphBoxDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

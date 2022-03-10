@@ -36,5 +36,5 @@ D:\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\pokercsharp.cspro
 D:\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\pokercsharp.dll
 D:\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\pokercsharp.pdb
 D:\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\pokercsharp.genruntimeconfig.cache
-D:\Csharp\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\ui\InputGraphBoxDialog.baml
-D:\Csharp\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\ui\InputGraphBoxDialog.g.cs
+D:\Csharp\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\ui\customview\InputGraphBoxDialog.baml
+D:\Csharp\pokercsharp\pokercsharp\pokercsharp\obj\Debug\netcoreapp3.1\ui\customview\InputGraphBoxDialog.g.cs

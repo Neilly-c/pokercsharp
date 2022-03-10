@@ -9,13 +9,17 @@ namespace mainsource.system.game {
     public class NewDeck {
 
         private Queue<Card> deck = new Queue<Card>();
+        private Card[] deck_list = new Card[52];
 
         public NewDeck() {
             Initdeck();
         }
 
+        public void ReShuffle() {
+            Initdeck();
+        }
+
         private Queue<Card> Initdeck() {
-            Card[] deck_list = new Card[52];
             for (int i = 0; i < Constants.CARDVALUE_LEN; ++i) {
                 deck_list[i * 4] = new Card(CardValueExt.GetCardValueFromInt(i + 1), Suit.CLUBS);
                 deck_list[i * 4 + 1] = new Card(CardValueExt.GetCardValueFromInt(i + 1), Suit.DIAMONDS);

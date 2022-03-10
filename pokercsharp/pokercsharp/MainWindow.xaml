@@ -24,7 +24,30 @@
                     <RowDefinition Height="200"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TreeView x:Name="nodeTree" Grid.RowSpan="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Displayed strategy:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                    <RadioButton x:Name="active4P" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <Button x:Name="historyButtonCO" Grid.Row="3" Grid.Column="1" Content="CO" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="100"/>
+                    <RadioButton x:Name="active3P" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <Button x:Name="historyButtonBTN" Grid.Row="4" Grid.Column="1" Content="BTN" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="100"/>
+                    <RadioButton x:Name="active2P" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <Button x:Name="historyButtonSB" Grid.Row="5" Grid.Column="1" Content="SB" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="100"/>
+                    <Button x:Name="historyButtonBB" Grid.Row="6" Grid.Column="1" Content="BB" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="100"/>
+                </Grid>
+                <TreeView x:Name="nodeTree" Grid.Row="1" Grid.RowSpan="2">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="x:Type src:NodeGroup"
                                           ItemsSource="{Binding children}">
@@ -42,8 +65,6 @@
                 <TextBox x:Name="stackText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" TextAlignment="Right" Text="20" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                 <Label Grid.Row="1" Grid.Column="2" Content="Iteration(Log) :" Target="{Binding ElementName=iterText}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Margin="0,40,0,0"/>
                 <TextBox x:Name="iterText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" TextAlignment="Right" Text="8" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,40,0,0"/>
-                <TextBox x:Name="boardText" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="Jc7d2h" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Margin="0,80,0,0"/>
-                <ToggleButton x:Name="preToggle" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Margin="0,0,0,60" VerticalAlignment="Bottom" Width="60" Height="20" Click="preToggle_Click"/>
                 <Button x:Name="buildButton" Grid.Row="1" Content="Build Tree" FontSize="20" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,40" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="buildButton_Click"/>
                 <Button x:Name="runButton" Grid.Row="1" Content="Run" FontSize="20" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="runButton_Click"/>
                 <Button x:Name="resetButton" Grid.Row="1" Content="Reset" FontSize="20" Grid.Column="2" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Width="100" Click="resetButton_Click"/>
@@ -54,14 +75,14 @@
         <TabItem Header="Range Builder" Name="tab3">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="820"/>
+                    <ColumnDefinition Width="840"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="handGridRange" Width="720" Height="720" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Grid x:Name="handGridRange" Width="820" Height="720" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <Grid x:Name="actionselectGrid" Grid.Row="0" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -82,21 +103,6 @@
                     </Grid.RowDefinitions>
                     <TextBox x:Name="strKey" Grid.ColumnSpan="3"/>
                     <Button x:Name="applyKey" Grid.Column="3" Click="ApplyKey_Click"/>
-                    <RadioButton GroupName="plrDefs" x:Name="radioUTG" Grid.Row="1" Grid.Column="0" IsChecked="True">UTG</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="radioHJ" Grid.Row="2" Grid.Column="0">HJ</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="radioCO" Grid.Row="3" Grid.Column="0">CO</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="radioBTN" Grid.Row="4" Grid.Column="0">BTN</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="radioSB" Grid.Row="5" Grid.Column="0">SB</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="radioBB" Grid.Row="6" Grid.Column="0">BB</RadioButton>
-                    <Button x:Name="actUTG" Grid.Row="1" Grid.Column="1"/>
-                    <Button x:Name="actHJ" Grid.Row="2" Grid.Column="1"/>
-                    <Button x:Name="actCO" Grid.Row="3" Grid.Column="1"/>
-                    <Button x:Name="actBTN" Grid.Row="4" Grid.Column="1"/>
-                    <Button x:Name="actSB" Grid.Row="5" Grid.Column="1"/>
-                    <Button x:Name="actBB" Grid.Row="6" Grid.Column="1"/>
-                    <RadioButton GroupName="clickDefs" x:Name="clickDefFold" Grid.Row="8" Grid.Column="0">Fold</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="clickDefCall" Grid.Row="8" Grid.Column="1">Call</RadioButton>
-                    <RadioButton GroupName="clickDefs" x:Name="clickDefRaise" Grid.Row="8" Grid.Column="2">Raise</RadioButton>
                 </Grid>
                 <DataGrid x:Name="summaryGridRange" Grid.Column="1" Grid.Row="1"/>
             </Grid>

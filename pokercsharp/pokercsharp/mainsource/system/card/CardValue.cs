@@ -21,9 +21,22 @@ namespace mainsource.system.card {
 
     public static class CardValueExt {
 
-
+        /// <summary>
+        /// A,2,3,4,....,J,Q,K order
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         public static int GetValue(this CardValue val) {
             return (int)val;
+        }
+
+        /// <summary>
+        /// A,K,Q,J,....,3,2 order
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static int GetPower(this CardValue val) {
+            return (14 - GetValue(val)) % 13;
         }
 
         public static string GetAbb(this CardValue val) {

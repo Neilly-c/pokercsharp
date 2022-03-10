@@ -12,6 +12,7 @@ namespace pokercsharp.ui {
     class GraphBox : Grid {
 
         protected readonly int BarCount = 5;
+        protected int usedValues = 0;
         public double[] values { get; set; }
         public double prob { get; set; }
         public List<Node> nodes { get; set; } = new List<Node>();
@@ -66,6 +67,7 @@ namespace pokercsharp.ui {
             double valueSum = 0;
             foreach(Node n in nodes) {
                 double[] strategys = n.GetAverageStrategy();
+                usedValues = strategys.Length > usedValues ? strategys.Length : usedValues;
                 for(int i = 0; i < strategys.Length; ++i) {
                     values[i] += strategys[i];
                     valueSum += strategys[i];
@@ -82,7 +84,7 @@ namespace pokercsharp.ui {
                 }
             }
             rows[1].Height = GridLengths.lengths[(int)(prob * 16)];
-            rows[0].Height = GridLengths.lengths[(int)(prob * 16)];
+            rows[0].Height = GridLengths.lengths[GridLengths.lengths.Length - (int)(prob * 16) - 1];
         }
 
         public void AddNode(Node newNode) {
@@ -124,14 +126,12 @@ namespace pokercsharp.ui {
             }
         }
 
-        private int loop = 0;
-
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs args) {
             string str = "";
             foreach(Node n in nodes) {
                 str += n.infoSet + "; ";
             }
-            for (int i = 0; i < values.Length; ++i) {
+            for (int i = 0; i < usedValues; ++i) {
                 str += string.Format("{0:f4}", values[i]);
                 str += ", ";
             }

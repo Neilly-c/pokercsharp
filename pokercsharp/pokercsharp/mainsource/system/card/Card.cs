@@ -45,7 +45,12 @@ namespace mainsource.system.card {
             return 13 * this.suit.GetValue() - this.value.GetValue();
         }
 
-        public int CompareTo(Card o) {      //As,Ah,...,2d,2cの順
+        /// <summary>
+        /// As,Ah,...,2d,2cの順
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns>大きければ正、小さければ負の値を返す</returns>
+        public int CompareTo(Card o) {
             bool otherIsAnAce = CardValue.ACE.Equals(o.GetValue());
             bool iamAnAce = CardValue.ACE.Equals(this.value);
             if (iamAnAce && !otherIsAnAce) {

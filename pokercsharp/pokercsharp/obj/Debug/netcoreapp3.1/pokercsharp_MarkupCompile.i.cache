@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NETCOREAPP;NETCOREAPP3_1;
 D:\Csharp\pokercsharp\pokercsharp\pokercsharp\App.xaml
-2622301644
+2-61169644
 
-41-419274996
+401707729670
 192-1533232326
-MainWindow.xaml;ui\InputGraphBoxDialog.xaml;
+MainWindow.xaml;ui\customview\InputGraphBoxDialog.xaml;
 
-True
+False
 

@@ -22,7 +22,7 @@ namespace pokercsharp.mainsource.cfrplus {
             this.plr = plr;
             NUM_ACTIONS = action_set.Length;
             regretSum = new double[NUM_ACTIONS];
-            strategy = new double[NUM_ACTIONS];
+            strategy = new double[NUM_ACTIONS];     //計1になるような各戦略の選択確率の配列
             strategySum = new double[NUM_ACTIONS];
         }
 

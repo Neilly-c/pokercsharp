@@ -11,8 +11,7 @@ namespace pokercsharp.ui {
             base.rows[0].Height = GridLengths.lengths[0];
         }
 
-        private int loop = 0;
-        public string[] actions { get; set; } = new string[3] { "Fold", "Call", "Raise" };
+        public string[] actions { get; set; } = new string[2] { "Fold", "Push" };
 
         public void SetActions(string[] actions) {
             this.actions = actions;
